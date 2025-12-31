@@ -1,14 +1,11 @@
-from pydantic import BaseModel, PlainValidator
-from typing import Optional, List, Any, Annotated
+from pydantic import BaseModel
+from typing import Optional, List, Any
 from datetime import datetime
 from app.models import ServiceType, ApplicationStatus, DocumentType
 
-def email_validator(v):
-    return str(v)
-
 # Auth Schemas
 class UserCreate(BaseModel):
-    email: Annotated[str, PlainValidator(email_validator)]
+    email: str
     mobile: str
     password: str
     full_name: str
