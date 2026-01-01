@@ -23,7 +23,7 @@ export const suppliers = {
         portal: 'https://www.sabarmatigas.in',
         nameChangeUrl: 'https://www.sabarmatigas.in',
         hasOnlinePortal: false,
-        offlineNote: 'Offline forms only - Visit local Sabarmati Gas office',
+        offlineNote: 'No online portal available - Visit local Sabarmati Gas office for offline forms',
         fields: ['consumer_number', 'applicant_name', 'mobile', 'email', 'address']
       },
       {
@@ -33,7 +33,7 @@ export const suppliers = {
         areas: 'Ahmedabad, Vadodara, Faridabad',
         portal: 'https://www.adanigas.com',
         nameChangeUrl: 'https://www.adanigas.com/name-transfer',
-        offlineForm: 'Download from https://www.adanigas.com',
+        offlineForm: 'https://www.adanigas.com',
         hasOnlinePortal: true,
         fields: ['bp_number', 'applicant_name', 'mobile', 'email', 'address']
       },
@@ -43,9 +43,10 @@ export const suppliers = {
         type: 'Private',
         areas: 'Ahmedabad (select areas)',
         portal: 'https://connect.torrentgas.com',
-        nameChangeUrl: 'https://www.torrentgas.com',
+        nameChangeUrl: 'https://connect.torrentgas.com',
         offlineForm: 'https://connect.torrentgas.com/attachments/static_content/download_page/Name_Transfer_Application_form_all_Locations_domestic.pdf',
-        hasOnlinePortal: true,
+        hasOnlinePortal: false,
+        offlineNote: 'Download offline form - No direct online submission',
         fields: ['consumer_number', 'applicant_name', 'mobile', 'email']
       },
       {
@@ -57,7 +58,7 @@ export const suppliers = {
         nameChangeUrl: 'https://www.vgl.co.in',
         offlineForm: 'https://www.vgl.co.in/sdm_downloads/affidavit-for-family-member-2-2/',
         hasOnlinePortal: false,
-        offlineNote: 'No specific online portal - Download affidavit form',
+        offlineNote: 'No online portal - Download affidavit form for name transfer',
         fields: ['consumer_number', 'applicant_name', 'mobile', 'email']
       },
       {
@@ -68,7 +69,7 @@ export const suppliers = {
         portal: 'https://www.irmenergy.com',
         nameChangeUrl: 'https://www.irmenergy.com',
         hasOnlinePortal: false,
-        offlineNote: 'No online portal - Contact IRM Energy office',
+        offlineNote: 'No online portal - Contact IRM Energy office directly',
         fields: ['consumer_number', 'applicant_name', 'mobile', 'email']
       }
     ]
@@ -78,6 +79,18 @@ export const suppliers = {
     nameGuj: 'વીજળી',
     suppliers: [
       {
+        id: 'torrent-power',
+        name: 'Torrent Power',
+        type: 'Private',
+        areas: 'Ahmedabad, Gandhinagar, Surat',
+        portal: 'https://www.torrentpower.com',
+        nameChangeUrl: 'https://connect.torrentpower.com',
+        offlineForm: 'https://www.torrentpower.com/public/pdf/investors/AHDAHDNameChangeLTENGForm2407191_20211129182958.pdf',
+        hasOnlinePortal: false,
+        offlineNote: 'Online name change form not available - Download offline form PDF and submit at Torrent Power office',
+        fields: ['city', 'service_number', 't_no', 'applicant_name', 'mobile', 'email']
+      },
+      {
         id: 'pgvcl',
         name: 'PGVCL',
         fullName: 'Paschim Gujarat Vij Company Ltd',
@@ -86,7 +99,7 @@ export const suppliers = {
         portal: 'https://www.pgvcl.com',
         nameChangeUrl: 'https://portal.guvnl.in/login.php',
         hasOnlinePortal: true,
-        offlineNote: 'Offline forms available at PGVCL office',
+        offlineNote: 'Offline forms also available at PGVCL office',
         fields: ['consumer_number', 'applicant_name', 'mobile', 'email', 'address']
       },
       {
@@ -98,7 +111,7 @@ export const suppliers = {
         portal: 'https://www.ugvcl.com',
         nameChangeUrl: 'https://portal.guvnl.in/login.php',
         hasOnlinePortal: true,
-        offlineNote: 'Offline forms available at UGVCL office',
+        offlineNote: 'Offline forms also available at UGVCL office',
         fields: ['consumer_number', 'applicant_name', 'mobile', 'email', 'address']
       },
       {
@@ -110,7 +123,7 @@ export const suppliers = {
         portal: 'https://www.mgvcl.com',
         nameChangeUrl: 'https://portal.guvnl.in/login.php',
         hasOnlinePortal: true,
-        offlineNote: 'Offline forms available at MGVCL office',
+        offlineNote: 'Offline forms also available at MGVCL office',
         fields: ['consumer_number', 'applicant_name', 'mobile', 'email', 'address']
       },
       {
@@ -122,19 +135,8 @@ export const suppliers = {
         portal: 'https://www.dgvcl.com',
         nameChangeUrl: 'https://portal.guvnl.in/login.php',
         hasOnlinePortal: true,
-        offlineNote: 'Offline forms available at DGVCL office',
+        offlineNote: 'Offline forms also available at DGVCL office',
         fields: ['consumer_number', 'applicant_name', 'mobile', 'email', 'address']
-      },
-      {
-        id: 'torrent-power',
-        name: 'Torrent Power',
-        type: 'Private',
-        areas: 'Ahmedabad, Gandhinagar, Surat',
-        portal: 'https://www.torrentpower.com',
-        nameChangeUrl: 'https://connect.torrentpower.com',
-        offlineForm: 'https://www.torrentpower.com/public/pdf/investors/AHDAHDNameChangeLTENGForm2407191_20211129182958.pdf',
-        hasOnlinePortal: true,
-        fields: ['city', 'service_number', 't_no', 'applicant_name', 'mobile', 'email']
       }
     ]
   },
@@ -152,7 +154,7 @@ export const suppliers = {
         nameChangeUrl: 'https://gwssb.gujarat.gov.in',
         offlineForm: 'https://watersupply.gujarat.gov.in/forms',
         hasOnlinePortal: false,
-        offlineNote: 'No online portal - Forms available at https://watersupply.gujarat.gov.in/forms',
+        offlineNote: 'No online portal - Download forms from watersupply.gujarat.gov.in/forms',
         fields: ['connection_number', 'applicant_name', 'mobile', 'email', 'village', 'taluka', 'district']
       },
       {
@@ -164,7 +166,7 @@ export const suppliers = {
         portal: 'https://ahmedabadcity.gov.in',
         nameChangeUrl: 'https://ahmedabadcity.gov.in',
         hasOnlinePortal: false,
-        offlineNote: 'No online portal - Visit AMC office for forms',
+        offlineNote: 'No online portal - Visit AMC office for forms (no specific download available)',
         fields: ['connection_number', 'applicant_name', 'mobile', 'email', 'address', 'zone']
       },
       {
@@ -176,7 +178,7 @@ export const suppliers = {
         portal: 'https://www.suratmunicipal.gov.in',
         nameChangeUrl: 'https://www.suratmunicipal.gov.in',
         hasOnlinePortal: false,
-        offlineNote: 'No online portal - Printable forms at SMC office',
+        offlineNote: 'No online portal - Printable forms available at SMC office or check SMC website',
         fields: ['connection_number', 'applicant_name', 'mobile', 'email', 'address']
       },
       {
@@ -224,7 +226,7 @@ export const suppliers = {
       {
         id: 'e-dhara',
         name: 'e-Dhara',
-        fullName: 'Revenue Department - Mutation (Form 6)',
+        fullName: 'Revenue Department - Mutation (Form 6/ફરફાર)',
         type: 'Government',
         areas: 'All Gujarat - Land Mutation',
         portal: 'https://landrecords.gujarat.gov.in',
@@ -248,14 +250,14 @@ export const suppliers = {
       {
         id: 'talati',
         name: 'Talati (Village Officer)',
-        fullName: 'Revenue Department - Village Level',
+        fullName: 'Revenue Department - Village Level (Form 6)',
         type: 'Government',
         areas: 'All Gujarat Villages',
         portal: 'https://revenuedepartment.gujarat.gov.in',
-        nameChangeUrl: 'https://revenuedepartment.gujarat.gov.in',
+        nameChangeUrl: 'https://anyror.gujarat.gov.in',
         offlineForm: 'https://revenuedepartment.gujarat.gov.in/e-dhara-forms',
         hasOnlinePortal: false,
-        offlineNote: 'Visit local Talati office with Form 6',
+        offlineNote: 'Visit local Talati office with Form 6 - Download from e-Dhara forms',
         fields: ['survey_number', 'village', 'taluka', 'district', 'applicant_name', 'mobile']
       },
       {
@@ -268,8 +270,34 @@ export const suppliers = {
         nameChangeUrl: 'https://revenuedepartment.gujarat.gov.in',
         offlineForm: 'https://revenuedepartment.gujarat.gov.in/e-dhara-forms',
         hasOnlinePortal: false,
-        offlineNote: 'Visit Taluka Revenue Office',
+        offlineNote: 'Visit Taluka Revenue Office with Form 6 - Download from e-Dhara forms',
         fields: ['survey_number', 'village', 'taluka', 'district', 'applicant_name', 'mobile']
+      },
+      {
+        id: 'indiafilings',
+        name: 'IndiaFilings',
+        fullName: 'Private Consultant - Gujarat Land Mutation',
+        type: 'Private',
+        areas: 'All Gujarat - Consulting Services',
+        portal: 'https://www.indiafilings.com',
+        nameChangeUrl: 'https://www.indiafilings.com/learn/gujarat-land-mutation/',
+        offlineForm: 'https://revenuedepartment.gujarat.gov.in/e-dhara-forms',
+        hasOnlinePortal: true,
+        offlineNote: 'Private consultant - Uses govt Form 6',
+        fields: ['survey_number', 'village', 'taluka', 'district', 'applicant_name', 'mobile', 'email']
+      },
+      {
+        id: 'ezylegal',
+        name: 'ezyLegal',
+        fullName: 'Private Legal & Property Services',
+        type: 'Private',
+        areas: 'All Gujarat - Legal Services',
+        portal: 'https://www.ezylegal.in',
+        nameChangeUrl: 'https://ezylegal.in/property',
+        offlineForm: 'https://revenuedepartment.gujarat.gov.in/e-dhara-forms',
+        hasOnlinePortal: true,
+        offlineNote: 'Private consultant - Uses govt Form 6',
+        fields: ['survey_number', 'village', 'taluka', 'district', 'applicant_name', 'mobile', 'email']
       }
     ]
   }
