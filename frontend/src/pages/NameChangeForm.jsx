@@ -147,11 +147,11 @@ const NameChangeForm = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-screen bg-gray-50">
       {/* Back Button */}
       <button
         onClick={() => step === 1 ? navigate('/services') : setStep(step - 1)}
-        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 px-6"
+        className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 px-6 pt-4"
       >
         <ArrowLeft className="w-5 h-5" /> 
         {step === 1 ? 'Back to Services' : 'Back'}
@@ -159,7 +159,7 @@ const NameChangeForm = () => {
 
       {/* Header */}
       <div className={`bg-gradient-to-r ${gradient} p-6`}>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 max-w-7xl mx-auto">
           <div className="bg-white/25 backdrop-blur-sm p-3 rounded-xl">
             <Icon className="w-8 h-8 text-white" />
           </div>
@@ -172,7 +172,8 @@ const NameChangeForm = () => {
         </div>
       </div>
 
-      <div className="bg-white shadow-lg p-6">
+      <div className="bg-white shadow-lg">
+        <div className="max-w-7xl mx-auto p-6">
         {/* Step Indicator */}
         <div className="flex items-center justify-center gap-4 mb-8">
           {[1, 2, 3].map((s) => (
@@ -201,25 +202,25 @@ const NameChangeForm = () => {
 
             {/* All categories - Two separate boxes for Government and Private */}
             {['gas', 'electricity', 'water', 'property'].includes(category) ? (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Government Box */}
-                <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-                  <div className="bg-green-600 px-4 py-3">
-                    <h3 className="text-white font-bold text-sm">🏛️ Government</h3>
+                <div className="border-2 border-gray-300 rounded-lg overflow-hidden shadow-md">
+                  <div className="bg-green-600 px-6 py-4">
+                    <h3 className="text-white font-bold text-lg">🏛️ Government</h3>
                   </div>
-                  <div className="p-4 space-y-2">
+                  <div className="p-6 space-y-3">
                     {supplierList.filter(s => s.type === 'Government').map((supplier) => (
                       <button
                         key={supplier.id}
                         onClick={() => handleSupplierSelect(supplier)}
-                        className="w-full flex items-center justify-between p-3 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-all text-left group"
+                        className="w-full flex items-center justify-between p-4 bg-white border-2 border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-all text-left group"
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-gray-800 text-sm">
+                            <span className="font-semibold text-gray-800 group-hover:text-green-700">
                               {supplier.name}
                             </span>
-                            <span className={`text-xs px-2 py-0.5 rounded ${
+                            <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${
                               supplier.hasOnlinePortal 
                                 ? 'bg-blue-100 text-blue-700' 
                                 : 'bg-orange-100 text-orange-700'
@@ -227,32 +228,32 @@ const NameChangeForm = () => {
                               {supplier.hasOnlinePortal ? 'Online' : 'Offline'}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-500 mt-1">{supplier.areas}</p>
+                          <p className="text-xs text-gray-500 mt-2">{supplier.areas}</p>
                         </div>
-                        <ExternalLink className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <ExternalLink className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2 group-hover:text-green-600" />
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {/* Private Box */}
-                <div className="border border-gray-300 rounded-lg overflow-hidden shadow-sm">
-                  <div className="bg-red-600 px-4 py-3">
-                    <h3 className="text-white font-bold text-sm">🏢 Private</h3>
+                <div className="border-2 border-gray-300 rounded-lg overflow-hidden shadow-md">
+                  <div className="bg-red-600 px-6 py-4">
+                    <h3 className="text-white font-bold text-lg">🏢 Private</h3>
                   </div>
-                  <div className="p-4 space-y-2">
+                  <div className="p-6 space-y-3">
                     {supplierList.filter(s => s.type === 'Private').map((supplier) => (
                       <button
                         key={supplier.id}
                         onClick={() => handleSupplierSelect(supplier)}
-                        className="w-full flex items-center justify-between p-3 bg-white border border-gray-200 rounded hover:bg-gray-50 transition-all text-left group"
+                        className="w-full flex items-center justify-between p-4 bg-white border-2 border-gray-200 rounded-lg hover:border-red-500 hover:bg-red-50 transition-all text-left group"
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-gray-800 text-sm">
+                            <span className="font-semibold text-gray-800 group-hover:text-red-700">
                               {supplier.name}
                             </span>
-                            <span className={`text-xs px-2 py-0.5 rounded ${
+                            <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap ${
                               supplier.hasOnlinePortal 
                                 ? 'bg-blue-100 text-blue-700' 
                                 : 'bg-orange-100 text-orange-700'
@@ -260,9 +261,9 @@ const NameChangeForm = () => {
                               {supplier.hasOnlinePortal ? 'Online' : 'Offline'}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-500 mt-1">{supplier.areas}</p>
+                          <p className="text-xs text-gray-500 mt-2">{supplier.areas}</p>
                         </div>
-                        <ExternalLink className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                        <ExternalLink className="w-5 h-5 text-gray-400 flex-shrink-0 ml-2 group-hover:text-red-600" />
                       </button>
                     ))}
                   </div>
