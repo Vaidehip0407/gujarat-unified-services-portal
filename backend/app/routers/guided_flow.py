@@ -1,7 +1,7 @@
 """
 Guided Flow Router - WhatsApp-style service selection and application submission
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Optional
@@ -11,7 +11,7 @@ import json
 import os
 
 from app.database import get_db
-from app.auth import get_current_user
+from app.auth import get_current_user, get_current_user_optional
 from app.models import User, GuidedFlowApplication
 
 router = APIRouter(prefix="/api/guided-flow", tags=["Guided Flow"])
@@ -173,11 +173,14 @@ def get_providers(category: str):
 
 @router.post("/applications", response_model=ApplicationResponse)
 def submit_application(
+    request: Request,
     application: ApplicationSubmit,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
     """Submit a new application through guided flow"""
+    # Get optional user from request
+    current_user = get_current_user_optional(request, db)
+    
     services_data = load_services_data()
     
     # Validate category
@@ -200,10 +203,10 @@ def submit_application(
     # Generate tracking ID
     tracking_id = generate_tracking_id(application.category, db)
     
-    # Create application record
+    # Create application record (user_id can be None for anonymous submissions)
     db_application = GuidedFlowApplication(
         tracking_id=tracking_id,
-        user_id=current_user.id,
+        user_id=current_user.id if current_user else None,
         category=application.category,
         provider_id=application.provider_id,
         provider_name=provider["name"],

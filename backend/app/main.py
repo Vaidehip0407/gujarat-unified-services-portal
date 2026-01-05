@@ -6,7 +6,8 @@ from app.config import get_settings
 
 settings = get_settings()
 
-# Create database tables
+# Drop and recreate all tables (for development)
+Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(

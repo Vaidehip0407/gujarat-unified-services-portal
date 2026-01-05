@@ -294,7 +294,7 @@ class GuidedFlowApplication(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     tracking_id = Column(String(20), unique=True, index=True, nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     category = Column(String(50), nullable=False)  # gas, electricity, water, property
     provider_id = Column(String(50), nullable=False)
     provider_name = Column(String(100), nullable=False)

@@ -87,12 +87,18 @@ const GuidedFlowPage = () => {
       setIsSubmitting(true);
       setError(null);
 
+      const headers = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add token if available
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_BASE}/guided-flow/applications`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers,
         body: JSON.stringify({
           category: selectedCategory.id,
           provider_id: selectedProvider.id,
