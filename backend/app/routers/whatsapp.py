@@ -1,17 +1,17 @@
 from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 import json
-import os
 from datetime import datetime
 import httpx
+from app.config import settings
 
 router = APIRouter(prefix="/api/whatsapp", tags=["whatsapp"])
 
-# WhatsApp Configuration
-WHATSAPP_BUSINESS_ACCOUNT_ID = os.getenv("WHATSAPP_BUSINESS_ACCOUNT_ID", "")
-WHATSAPP_PHONE_NUMBER_ID = os.getenv("WHATSAPP_PHONE_NUMBER_ID", "")
-WHATSAPP_API_TOKEN = os.getenv("WHATSAPP_API_TOKEN", "")
-WHATSAPP_VERIFY_TOKEN = os.getenv("WHATSAPP_VERIFY_TOKEN", "verify_token_123")
+# WhatsApp Configuration from settings
+WHATSAPP_BUSINESS_ACCOUNT_ID = settings.WHATSAPP_BUSINESS_ACCOUNT_ID
+WHATSAPP_PHONE_NUMBER_ID = settings.WHATSAPP_PHONE_NUMBER_ID
+WHATSAPP_API_TOKEN = settings.WHATSAPP_API_TOKEN
+WHATSAPP_VERIFY_TOKEN = settings.WHATSAPP_VERIFY_TOKEN
 
 # Service data (same as web)
 SERVICES = {
@@ -28,12 +28,26 @@ user_sessions = {}
 @router.get("/webhook")
 async def verify_webhook(request: Request):
     """Verify webhook with WhatsApp"""
+    # Log all query parameters
+    print(f"All query params: {dict(request.query_params)}")
+    print(f"Request URL: {request.url}")
+    
     verify_token = request.query_params.get("hub.verify_token")
     challenge = request.query_params.get("hub.challenge")
+    mode = request.query_params.get("hub.mode")
     
-    if verify_token == WHATSAPP_VERIFY_TOKEN:
-        return JSONResponse(content=int(challenge))
+    print(f"Webhook verification request: mode={mode}, verify_token={verify_token}, challenge={challenge}")
     
+    # If no parameters, return OK for Meta's initial check
+    if not mode and not verify_token and not challenge:
+        print("No parameters provided - returning 200 OK for Meta's health check")
+        return PlainTextResponse(content="OK", status_code=200)
+    
+    if mode == "subscribe" and verify_token == WHATSAPP_VERIFY_TOKEN:
+        print(f"Verification successful, returning challenge: {challenge}")
+        return PlainTextResponse(content=str(challenge), status_code=200)
+    
+    print(f"Verification failed: mode={mode}, expected_token={WHATSAPP_VERIFY_TOKEN}, received_token={verify_token}")
     raise HTTPException(status_code=403, detail="Invalid verify token")
 
 
@@ -284,7 +298,7 @@ async def send_message(phone: str, text: str):
         print(f"[DEMO] Would send to {phone}: {text}")
         return
     
-    url = f"https://graph.instagram.com/v18.0/{WHATSAPP_PHONE_NUMBER_ID}/messages"
+    url = f"https://graph.facebook.com/v18.0/{WHATSAPP_PHONE_NUMBER_ID}/messages"
     
     headers = {
         "Authorization": f"Bearer {WHATSAPP_API_TOKEN}",

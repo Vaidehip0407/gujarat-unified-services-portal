@@ -2,6 +2,32 @@
 
 A single portal to manage all utility services - Electricity, Gas, Water & Property with auto-fill functionality.
 
+---
+
+## 🚀 Quick Deploy to AWS
+
+### 1. Set AWS Credentials
+```powershell
+$env:AWS_ACCESS_KEY_ID="your-key"
+$env:AWS_SECRET_ACCESS_KEY="your-secret"
+```
+
+### 2. Deploy Infrastructure
+```powershell
+.\terraform-deploy.ps1 -FullDeploy
+```
+
+### 3. Get Server IP & Connect
+```powershell
+cd terraform
+terraform output instance_public_ip
+ssh -i "gov-portal.pem" ubuntu@<YOUR_IP>
+```
+
+**See AWS_DEPLOYMENT_GUIDE.md for complete setup.**
+
+---
+
 ## Features
 
 - ⚡ **Electricity** - Name change, new connection
