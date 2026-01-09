@@ -11,6 +11,10 @@ import Applications from './pages/Applications';
 import NameChangeForm from './pages/NameChangeForm';
 import RPADemo from './pages/RPADemo';
 import GuidedFlowPage from './pages/GuidedFlow';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import UserManagement from './pages/admin/UserManagement';
+import ApplicationManagement from './pages/admin/ApplicationManagement';
+import DocumentManagement from './pages/admin/DocumentManagement';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -57,6 +61,30 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/users" element={
+            <ProtectedRoute>
+              <UserManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/applications" element={
+            <ProtectedRoute>
+              <ApplicationManagement />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/documents" element={
+            <ProtectedRoute>
+              <DocumentManagement />
+            </ProtectedRoute>
+          } />
+          
+          {/* User Routes */}
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />
