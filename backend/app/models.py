@@ -73,9 +73,6 @@ class User(Base):
     state = Column(String(100))
     pincode = Column(String(6))
     date_of_birth = Column(String(10))
-    role = Column(String(20), default="user")  # user, admin, officer
-    is_active = Column(Integer, default=1)  # 1=active, 0=inactive
-    last_login = Column(DateTime(timezone=True))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
@@ -173,13 +170,11 @@ class Application(Base):
     status = Column(Enum(ApplicationStatus), default=ApplicationStatus.DRAFT)
     form_data = Column(JSON)  # Filled form data
     external_reference = Column(String(100))  # Reference from external site
-    assigned_officer_id = Column(Integer, ForeignKey("users.id"))  # Admin assigned officer
-    processing_notes = Column(Text)  # Admin/Officer notes
     submitted_at = Column(DateTime(timezone=True))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
-    user = relationship("User", back_populates="applications", foreign_keys=[user_id])
+    user = relationship("User", back_populates="applications")
     rpa_submissions = relationship("RPASubmission", back_populates="application")
 
 class RPASubmissionStatus(str, enum.Enum):

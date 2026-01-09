@@ -44,13 +44,8 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    # Update last login
-    from datetime import datetime
-    user.last_login = datetime.utcnow()
-    db.commit()
-    
     access_token = create_access_token(
-        data={"sub": str(user.id), "role": user.role},
+        data={"sub": str(user.id)},
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     return {"access_token": access_token, "token_type": "bearer"}

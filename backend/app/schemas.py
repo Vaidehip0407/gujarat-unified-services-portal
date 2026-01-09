@@ -31,9 +31,6 @@ class UserResponse(BaseModel):
     state: Optional[str]
     pincode: Optional[str]
     date_of_birth: Optional[str]
-    role: Optional[str] = "user"
-    is_active: Optional[int] = 1
-    last_login: Optional[datetime] = None
     
     class Config:
         from_attributes = True
