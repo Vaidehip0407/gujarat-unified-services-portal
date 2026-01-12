@@ -29,6 +29,7 @@ const GuidedFlow = () => {
     { id: 'water', name: 'Water', nameHindi: 'पानी', icon: Droplets, color: 'bg-blue-500', providers: [] },
     { id: 'property', name: 'Property', nameHindi: 'संपत्ति', icon: Building, color: 'bg-green-500', providers: [] }
   ]);
+  const [currentProviders, setCurrentProviders] = useState([]);
   const [formValues, setFormValues] = useState({
     consumerNumber: '',
     oldName: '',
@@ -47,12 +48,10 @@ const GuidedFlow = () => {
   const fetchProviders = async (categoryId) => {
     try {
       const response = await api.get(`/guided-flow/providers/${categoryId}`);
-      const updatedServices = services.map(s => 
-        s.id === categoryId ? { ...s, providers: response.data.providers.map(p => p.name) } : s
-      );
-      setServices(updatedServices);
+      setCurrentProviders(response.data.providers || []);
     } catch (error) {
       console.error('Error fetching providers:', error);
+      setCurrentProviders([]);
     }
   };
 
@@ -244,23 +243,29 @@ const GuidedFlow = () => {
                     {selectedCategory.name} ({selectedCategory.nameHindi})
                   </p>
                 </div>
-                <div className="grid gap-2">
-                  {selectedCategory.providers.map((provider) => (
-                    <button
-                      key={provider}
-                      onClick={() => handleProviderSelect(provider)}
-                      className="p-3 rounded-lg border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all text-left flex items-center justify-between group"
-                    >
-                      <div>
-                        <h3 className="text-sm font-bold text-gray-800 group-hover:text-orange-600">{provider}</h3>
-                        <p className="text-xs text-gray-500">Click to select</p>
-                      </div>
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600 text-sm font-bold">→</span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                {currentProviders.length === 0 ? (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500">Loading providers...</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-2">
+                    {currentProviders.map((provider) => (
+                      <button
+                        key={provider.id}
+                        onClick={() => handleProviderSelect(provider.name)}
+                        className="p-3 rounded-lg border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all text-left flex items-center justify-between group"
+                      >
+                        <div>
+                          <h3 className="text-sm font-bold text-gray-800 group-hover:text-orange-600">{provider.name}</h3>
+                          <p className="text-xs text-gray-500">{provider.type === 'government' ? '🏛️ Government' : '🏢 Private'}</p>
+                        </div>
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                          <span className="text-green-600 text-sm font-bold">→</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
