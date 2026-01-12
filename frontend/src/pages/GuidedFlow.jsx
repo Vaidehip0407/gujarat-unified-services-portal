@@ -1,15 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, MessageCircle, Zap, Flame, Droplets, Building, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useGuidedFlow from '../hooks/useGuidedFlow';
 import api from '../api/axios';
-
-const SERVICES = [
-  { id: 'electricity', name: 'Electricity', nameHindi: 'बिजली', icon: Zap, color: 'bg-yellow-500', providers: ['DGVCL', 'MGVCL', 'PGVCL', 'UGVCL', 'GUVNL'] },
-  { id: 'gas', name: 'Gas', nameHindi: 'गैस', icon: Flame, color: 'bg-red-500', providers: ['Gujarat Gas', 'Adani Gas', 'HP Gas', 'Indane'] },
-  { id: 'water', name: 'Water', nameHindi: 'पानी', icon: Droplets, color: 'bg-blue-500', providers: ['Water Board', 'Municipal Corporation'] },
-  { id: 'property', name: 'Property', nameHindi: 'संपत्ति', icon: Building, color: 'bg-green-500', providers: ['Land Records', 'Municipal Corporation'] }
-];
 
 const GuidedFlow = () => {
   const navigate = useNavigate();
@@ -30,6 +23,12 @@ const GuidedFlow = () => {
   } = useGuidedFlow();
 
   const [loading, setLoading] = useState(false);
+  const [services, setServices] = useState([
+    { id: 'electricity', name: 'Electricity', nameHindi: 'बिजली', icon: Zap, color: 'bg-yellow-500', providers: [] },
+    { id: 'gas', name: 'Gas', nameHindi: 'गैस', icon: Flame, color: 'bg-red-500', providers: [] },
+    { id: 'water', name: 'Water', nameHindi: 'पानी', icon: Droplets, color: 'bg-blue-500', providers: [] },
+    { id: 'property', name: 'Property', nameHindi: 'संपत्ति', icon: Building, color: 'bg-green-500', providers: [] }
+  ]);
   const [formValues, setFormValues] = useState({
     consumerNumber: '',
     oldName: '',
@@ -37,6 +36,25 @@ const GuidedFlow = () => {
     mobile: '',
     email: ''
   });
+
+  // Fetch providers when service is selected
+  useEffect(() => {
+    if (selectedCategory) {
+      fetchProviders(selectedCategory.id);
+    }
+  }, [selectedCategory]);
+
+  const fetchProviders = async (categoryId) => {
+    try {
+      const response = await api.get(`/guided-flow/providers/${categoryId}`);
+      const updatedServices = services.map(s => 
+        s.id === categoryId ? { ...s, providers: response.data.providers.map(p => p.name) } : s
+      );
+      setServices(updatedServices);
+    } catch (error) {
+      console.error('Error fetching providers:', error);
+    }
+  };
 
   const getStepNumber = () => {
     switch (currentStep) {
@@ -198,7 +216,7 @@ const GuidedFlow = () => {
             {/* Service Selection */}
             {currentStep === 'service-select' && (
               <div className="grid grid-cols-2 gap-3 mt-4">
-                {SERVICES.map((service) => {
+                {services.map((service) => {
                   const Icon = service.icon;
                   return (
                     <button
@@ -211,7 +229,6 @@ const GuidedFlow = () => {
                       </div>
                       <h3 className="text-base font-bold text-gray-800">{service.name}</h3>
                       <p className="text-sm text-gray-600">{service.nameHindi}</p>
-                      <p className="text-xs text-gray-500 mt-1">{service.providers.length} providers</p>
                     </button>
                   );
                 })}
