@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import Documents from './pages/Documents';
 import Services from './pages/Services';
 import Applications from './pages/Applications';
+import GuidedFlow from './pages/GuidedFlow';
 import NameChangeForm from './pages/NameChangeForm';
 import RPADemo from './pages/RPADemo';
 import OfflineIndicator from './components/OfflineIndicator';
@@ -54,6 +55,7 @@ function App() {
             <Route path="documents" element={<Documents />} />
             <Route path="services" element={<Services />} />
             <Route path="applications" element={<Applications />} />
+            <Route path="guided-flow" element={<GuidedFlow />} />
             <Route path="electricity" element={<NameChangeForm />} />
             <Route path="gas" element={<NameChangeForm />} />
             <Route path="water" element={<NameChangeForm />} />

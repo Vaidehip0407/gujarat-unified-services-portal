@@ -16,6 +16,7 @@ const Layout = () => {
     { path: '/', icon: Home, label: 'Dashboard' },
     { path: '/services', icon: Settings, label: 'Services' },
     { path: '/applications', icon: FileText, label: 'My Applications' },
+    { path: '/guided-flow', icon: MessageCircle, label: 'Guided Flow' },
     { path: '/documents', icon: FileText, label: 'Documents' },
     { path: '/profile', icon: User, label: 'Profile' },
   ];
