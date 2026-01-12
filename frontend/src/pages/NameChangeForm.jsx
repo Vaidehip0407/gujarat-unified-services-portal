@@ -81,22 +81,35 @@ const NameChangeForm = () => {
 
       await api.post(`/applications/${appResponse.data.id}/submit`);
 
-      // Use supplier ID directly as demo site (backend will handle all)
-      const demoSite = selectedSupplier.id;
-      
-      // Prepare form data for auto-fill
-      const autoFillData = encodeURIComponent(JSON.stringify({
-        ...formData,
-        application_type: 'name_change',
-        city: formData.city || 'Ahmedabad'
+      // Store form data for auto-fill
+      localStorage.setItem('dgvcl_autofill_data', JSON.stringify({
+        mobile: formData.mobile,
+        consumer_number: formData.consumer_number || formData.service_number,
+        provider: selectedSupplier.name,
+        timestamp: Date.now()
       }));
 
-      // Set iframe URL for RPA demo (same page) - use relative path for proxy
-      const demoUrl = `/demo-govt/${demoSite}?rpa=true&data=${autoFillData}`;
-      setIframeUrl(demoUrl);
+      // Open official portal directly instead of RPA demo
+      const portalUrls = {
+        'dgvcl': 'https://portal.guvnl.in/login.php',
+        'pgvcl': 'https://portal.guvnl.in/login.php',
+        'ugvcl': 'https://portal.guvnl.in/login.php',
+        'mgvcl': 'https://portal.guvnl.in/login.php',
+        'torrent-power': 'https://connect.torrentpower.com',
+        'gujarat-gas': 'https://iconnect.gujaratgas.com/Portal/outer-service-request_template.aspx',
+        'adani-gas': 'https://www.adanigas.com/name-transfer'
+      };
 
-      // Go to RPA processing step (iframe view)
-      setStep(3);
+      const portalUrl = portalUrls[selectedSupplier.id] || selectedSupplier.portal_url;
+      
+      // Open portal in new tab
+      if (portalUrl) {
+        window.open(portalUrl, '_blank');
+      }
+
+      // Go to success step
+      setStep(4);
+      setMessage(`Application submitted successfully! Tracking ID: ${appResponse.data.tracking_id}`);
     } catch (error) {
       setMessage('Failed to save application. Please try again.');
     } finally {
