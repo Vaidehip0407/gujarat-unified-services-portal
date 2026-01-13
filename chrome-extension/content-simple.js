@@ -23,13 +23,16 @@ window.addEventListener('load', function() {
       setTimeout(function() {
         console.log('🔍 Looking for mobile field...');
         
-        // Find mobile field
-        const mobileField = document.querySelector('input[id="mobile"]') || 
+        // Find mobile field - be more specific!
+        // Look for input with placeholder "Mobile No" or id/name containing "mobile"
+        const mobileField = document.querySelector('input[placeholder*="Mobile"]') || 
+                           document.querySelector('input[id="mobile"]') || 
                            document.querySelector('input[name="mobile"]') ||
-                           document.querySelector('input[type="text"]');
+                           document.querySelector('input[type="text"][placeholder*="Mobile"]') ||
+                           document.querySelector('input[type="tel"]');
         
         if (mobileField) {
-          console.log('✅ Found mobile field!');
+          console.log('✅ Found mobile field:', mobileField);
           mobileField.value = mobile;
           mobileField.dispatchEvent(new Event('input', { bubbles: true }));
           mobileField.dispatchEvent(new Event('change', { bubbles: true }));
@@ -40,14 +43,49 @@ window.addEventListener('load', function() {
             mobileField.style.backgroundColor = '';
           }, 3000);
         } else {
-          console.error('❌ Mobile field not found!');
+          console.error('❌ Mobile field not found! Trying alternative...');
+          
+          // Alternative: Find all inputs and look for the one that's NOT captcha
+          const allInputs = document.querySelectorAll('input[type="text"]');
+          console.log('Found inputs:', allInputs.length);
+          
+          for (let i = 0; i < allInputs.length; i++) {
+            const input = allInputs[i];
+            const placeholder = input.placeholder || '';
+            const name = input.name || '';
+            const id = input.id || '';
+            
+            console.log('Input ' + i + ':', { placeholder, name, id });
+            
+            // Skip captcha field
+            if (placeholder.toLowerCase().includes('captcha') || 
+                name.toLowerCase().includes('captcha') ||
+                id.toLowerCase().includes('captcha')) {
+              console.log('Skipping captcha field');
+              continue;
+            }
+            
+            // This should be the mobile field
+            if (placeholder.toLowerCase().includes('mobile') || 
+                name.toLowerCase().includes('mobile') ||
+                id.toLowerCase().includes('mobile') ||
+                i === 0) { // First non-captcha input is usually mobile
+              input.value = mobile;
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+              input.dispatchEvent(new Event('change', { bubbles: true }));
+              input.style.backgroundColor = '#90EE90';
+              console.log('✅ Filled mobile in input ' + i + ':', mobile);
+              break;
+            }
+          }
         }
         
         // Find DISCOM dropdown
         console.log('🔍 Looking for DISCOM dropdown...');
         const discomDropdown = document.querySelector('select[id="discom"]') ||
                               document.querySelector('select[name="discom"]') ||
-                              document.querySelector('select.form-control');
+                              document.querySelector('select.form-control') ||
+                              document.querySelector('select');
         
         if (discomDropdown) {
           console.log('✅ Found DISCOM dropdown!');
@@ -73,18 +111,7 @@ window.addEventListener('load', function() {
         
         // Show success message
         const notification = document.createElement('div');
-        notification.style.cssText = `
-          position: fixed;
-          top: 20px;
-          right: 20px;
-          background: #4CAF50;
-          color: white;
-          padding: 15px 25px;
-          border-radius: 10px;
-          font-size: 16px;
-          z-index: 999999;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        `;
+        notification.style.cssText = 'position:fixed;top:20px;right:20px;background:#4CAF50;color:white;padding:15px 25px;border-radius:10px;font-size:16px;z-index:999999;box-shadow:0 4px 20px rgba(0,0,0,0.3);';
         notification.textContent = '✅ Auto-filled mobile & ' + discom + '!';
         document.body.appendChild(notification);
         
