@@ -344,7 +344,21 @@ function autoFillOnLoad() {
   if (window.location.hostname === 'portal.guvnl.in') {
     console.log('🔍 Extension: Checking for stored data...');
     
-    // Method 1: Check URL hash
+    // Method 1: Check URL query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const mobile = urlParams.get('mobile');
+    const discom = urlParams.get('discom');
+    
+    if (mobile && discom) {
+      console.log('📦 Extension: Found data in URL params:', { mobile, discom });
+      
+      setTimeout(() => {
+        fillFormWithData({ mobile, provider: discom });
+      }, 1500);
+      return;
+    }
+    
+    // Method 2: Check URL hash
     if (window.location.hash.includes('autofill=')) {
       try {
         const hashData = window.location.hash.split('autofill=')[1];
@@ -361,7 +375,7 @@ function autoFillOnLoad() {
       }
     }
     
-    // Method 2: Check localStorage (fallback)
+    // Method 3: Check localStorage (fallback)
     try {
       const storedData = localStorage.getItem('dgvcl_autofill_data');
       console.log('📦 Extension: Checking localStorage:', storedData);

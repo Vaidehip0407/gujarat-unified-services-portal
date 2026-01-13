@@ -42,28 +42,18 @@ const ConfirmationScreen = ({
       // Store in localStorage (for same domain)
       localStorage.setItem('dgvcl_autofill_data', JSON.stringify(dataToStore));
       
-      // Also try to send to extension via postMessage
-      window.postMessage({
-        type: 'DGVCL_AUTOFILL_DATA',
-        data: dataToStore
-      }, '*');
-      
-      // Store in sessionStorage as backup
-      sessionStorage.setItem('dgvcl_autofill_data', JSON.stringify(dataToStore));
-      
-      console.log('✅ Data stored in localStorage and sent to extension');
+      console.log('✅ Data stored in localStorage');
     } else {
       console.error('❌ No formData available!');
     }
     
-    // Open portal in new tab with data in URL hash (as backup)
-    const dataParam = formData ? `#autofill=${btoa(JSON.stringify({
-      mobile: formData.mobile,
-      provider: providerName
-    }))}` : '';
+    // Open portal in new tab with data in URL parameters
+    const urlWithData = formData 
+      ? `${portalUrl}?mobile=${encodeURIComponent(formData.mobile)}&discom=${encodeURIComponent(providerName)}`
+      : portalUrl;
     
-    console.log('🌐 Opening portal:', portalUrl + dataParam);
-    window.open(portalUrl + dataParam, '_blank');
+    console.log('🌐 Opening portal:', urlWithData);
+    window.open(urlWithData, '_blank');
   };
 
   return (
