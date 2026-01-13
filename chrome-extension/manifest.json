@@ -52,8 +52,9 @@
         "https://ahmedabadcity.gov.in/*",
         "https://anyror.gujarat.gov.in/*"
       ],
-      "js": ["content.js"],
-      "css": ["content.css"]
+      "js": ["content-simple.js"],
+      "css": ["content.css"],
+      "run_at": "document_end"
     }
   ],
   "background": {
