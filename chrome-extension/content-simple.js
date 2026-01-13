@@ -22,28 +22,18 @@ window.addEventListener('load', function() {
       // Wait 2 seconds for page to fully load
       setTimeout(function() {
         
-        // STEP 1: Find Mobile field by placeholder "Mobile No"
+        // STEP 1: Find Mobile field - ONLY the one with placeholder "Mobile No"
         console.log('🔍 Looking for Mobile No field...');
         
-        let mobileField = null;
-        const allInputs = document.querySelectorAll('input');
+        // Use very specific selector - input with placeholder containing "Mobile"
+        // but NOT containing "Captcha"
+        const mobileField = document.querySelector('input[placeholder="Mobile No"]') ||
+                           document.querySelector('input[placeholder*="Mobile"]');
         
-        for (let i = 0; i < allInputs.length; i++) {
-          const input = allInputs[i];
-          const placeholder = input.placeholder || '';
-          
-          console.log('Checking input ' + i + ': placeholder="' + placeholder + '"');
-          
-          // Look for "Mobile No" placeholder specifically
-          if (placeholder === 'Mobile No' || placeholder.toLowerCase() === 'mobile no') {
-            mobileField = input;
-            console.log('✅ Found Mobile No field at index ' + i);
-            break;
-          }
-        }
-        
-        // Fill mobile field
         if (mobileField) {
+          console.log('✅ Found Mobile No field');
+          
+          // Only fill if field is empty or has placeholder
           mobileField.focus();
           mobileField.value = mobile;
           mobileField.dispatchEvent(new Event('input', { bubbles: true }));
@@ -58,7 +48,7 @@ window.addEventListener('load', function() {
           console.error('❌ Mobile No field not found!');
         }
         
-        // STEP 2: Find DISCOM dropdown
+        // STEP 2: Find DISCOM dropdown - ONLY select element
         console.log('🔍 Looking for DISCOM dropdown...');
         const discomDropdown = document.querySelector('select');
         
@@ -78,6 +68,9 @@ window.addEventListener('load', function() {
             }
           }
         }
+        
+        // DO NOT TOUCH CAPTCHA FIELD - Leave it empty for user to fill
+        console.log('ℹ️ Captcha field left empty for user');
         
         // Show success notification
         const notification = document.createElement('div');
