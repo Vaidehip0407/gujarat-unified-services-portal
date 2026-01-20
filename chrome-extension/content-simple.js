@@ -73,26 +73,47 @@ function handleLoginPage() {
   showMsg('✅ STEP 1: Auto-filled Login\n👉 Enter Captcha & Click Login', 'green');
   
   // Auto-click Login button after captcha is filled
+  console.log('🔍 Looking for captcha field...');
   const captchaInput = document.querySelector('input[placeholder*="Captcha"]') || 
-                      document.querySelector('input[placeholder*="captcha"]');
+                      document.querySelector('input[placeholder*="captcha"]') ||
+                      document.querySelector('input[name*="captcha"]') ||
+                      document.querySelector('input[id*="captcha"]');
   
   if (captchaInput) {
+    console.log('✅ Found captcha field:', captchaInput);
+    captchaInput.style.border = '2px solid #e74c3c';
+    
     // Monitor captcha input for changes
     captchaInput.addEventListener('input', function() {
+      console.log('📝 Captcha input detected, length:', this.value.length);
+      
       if (this.value.length >= 4) { // Assuming captcha is at least 4 characters
+        console.log('✅ Captcha seems complete, looking for login button...');
+        
         setTimeout(() => {
+          // Try multiple selectors for login button
           const loginBtn = document.querySelector('input[value="Login"]') ||
                           document.querySelector('button[type="submit"]') ||
-                          document.querySelector('input[type="submit"]');
+                          document.querySelector('input[type="submit"]') ||
+                          document.querySelector('button:contains("Login")') ||
+                          document.querySelector('.btn-primary') ||
+                          document.querySelector('[onclick*="login"]');
           
           if (loginBtn) {
+            console.log('✅ Found login button:', loginBtn);
             console.log('✅ Captcha entered, auto-clicking Login...');
             showMsg('🤖 Auto-clicking Login button...', 'blue');
             loginBtn.click();
+          } else {
+            console.log('❌ Login button not found');
+            console.log('Available buttons:', document.querySelectorAll('button, input[type="submit"], input[type="button"]'));
           }
-        }, 1000); // Wait 1 second after captcha entry
+        }, 1500); // Wait 1.5 seconds after captcha entry
       }
     });
+  } else {
+    console.log('❌ Captcha field not found');
+    console.log('Available input fields:', document.querySelectorAll('input'));
   }
 }
 
