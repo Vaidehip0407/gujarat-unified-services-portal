@@ -92,6 +92,8 @@ class SeleniumConfig:
         if platform.system() == "Linux":
             chrome_options.add_argument('--disable-dev-shm-usage')
             chrome_options.add_argument('--remote-debugging-port=9222')
+            # Use Chromium binary path (already installed)
+            chrome_options.binary_location = '/usr/bin/chromium'
         
         return chrome_options
     
@@ -106,8 +108,16 @@ class SeleniumConfig:
             else:
                 # Use regular WebDriver with stealth configuration
                 chrome_options = self.get_chrome_options(headless, stealth_mode)
-                service = Service(ChromeDriverManager().install())
-                driver = webdriver.Chrome(service=service, options=chrome_options)
+                # Try system chromium-driver first, then ChromeDriverManager
+                try:
+                    # Use system chromium-driver (matches chromium version)
+                    service = Service('/usr/bin/chromedriver')
+                    driver = webdriver.Chrome(service=service, options=chrome_options)
+                except Exception as e:
+                    logger.warning(f"System chromedriver failed: {e}, trying ChromeDriverManager")
+                    # Fallback to ChromeDriverManager
+                    service = Service(ChromeDriverManager().install())
+                    driver = webdriver.Chrome(service=service, options=chrome_options)
             
             # Apply stealth settings
             if stealth_mode:
@@ -232,7 +242,7 @@ class SeleniumConfig:
             elif platform.system() == "Darwin":  # macOS
                 chrome_paths = ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"]
             else:  # Linux
-                chrome_paths = ["/usr/bin/google-chrome", "/usr/bin/chromium-browser"]
+                chrome_paths = ["/usr/bin/google-chrome", "/usr/bin/google-chrome-stable", "/usr/bin/chromium-browser"]
             
             chrome_installed = False
             chrome_version = None
