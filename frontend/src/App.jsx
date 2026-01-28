@@ -10,6 +10,7 @@ import Services from './pages/Services';
 import Applications from './pages/Applications';
 import GuidedFlow from './pages/GuidedFlow';
 import NameChangeForm from './pages/NameChangeForm';
+import NewConnectionForm from './pages/NewConnectionForm';
 import TestRPA from './pages/TestRPA';
 import SupplierVerification from './pages/SupplierVerification';
 import OfflineIndicator from './components/OfflineIndicator';
