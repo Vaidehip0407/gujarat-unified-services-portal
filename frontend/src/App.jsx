@@ -10,6 +10,7 @@ import Services from './pages/Services';
 import Applications from './pages/Applications';
 import GuidedFlow from './pages/GuidedFlow';
 import NameChangeForm from './pages/NameChangeForm';
+import NewConnectionForm from './pages/NewConnectionForm';
 import TorrentPowerRPA from './pages/TorrentPowerRPA';
 import OfflineIndicator from './components/OfflineIndicator';
 import InstallPWA from './components/InstallPWA';
