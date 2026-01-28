@@ -109,6 +109,58 @@ async def test_connection():
             "error": str(e)
         }
 
+@router.get("/test-rpa")
+async def test_rpa():
+    """Test RPA automation setup"""
+    try:
+        from app.services.torrent_power_service import torrent_power_service
+        
+        # Test if Chrome and ChromeDriver are available
+        test_result = {
+            "chrome_available": False,
+            "chromedriver_available": False,
+            "selenium_working": False,
+            "error": None
+        }
+        
+        # Test Chrome installation
+        import subprocess
+        try:
+            chrome_version = subprocess.check_output(['google-chrome', '--version'], stderr=subprocess.STDOUT)
+            test_result["chrome_available"] = True
+            test_result["chrome_version"] = chrome_version.decode().strip()
+        except Exception as e:
+            test_result["chrome_error"] = str(e)
+        
+        # Test ChromeDriver installation
+        try:
+            chromedriver_version = subprocess.check_output(['chromedriver', '--version'], stderr=subprocess.STDOUT)
+            test_result["chromedriver_available"] = True
+            test_result["chromedriver_version"] = chromedriver_version.decode().strip()
+        except Exception as e:
+            test_result["chromedriver_error"] = str(e)
+        
+        # Test Selenium setup
+        try:
+            torrent_power_service.setup_driver()
+            test_result["selenium_working"] = True
+            torrent_power_service.cleanup()
+        except Exception as e:
+            test_result["selenium_error"] = str(e)
+        
+        return {
+            "success": True,
+            "message": "RPA test completed",
+            "test_results": test_result
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"RPA test failed: {str(e)}",
+            "error": str(e)
+        }
+
 @router.get("/form-fields")
 async def get_form_fields():
     """Get information about required form fields"""

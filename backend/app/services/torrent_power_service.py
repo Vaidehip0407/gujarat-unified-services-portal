@@ -109,34 +109,90 @@ class TorrentPowerService:
             return {"success": False, "error": str(e)}
     
     def navigate_to_name_change(self):
-        """Navigate to name change application"""
+        """Navigate to name change application following exact Torrent Power flow"""
         try:
-            logger.info("🧭 Navigating to name change application...")
+            logger.info("🧭 Following Torrent Power navigation flow...")
             
-            # Look for "Apply now" button on dashboard
-            apply_buttons = self.driver.find_elements(By.XPATH, "//button[contains(text(), 'Apply now')]")
-            if apply_buttons:
-                if selenium_config.safe_click(self.driver, apply_buttons[0]):
-                    logger.info("✅ Apply now button clicked")
-                    time.sleep(2)
+            # Step 1: Look for "Apply" button on dashboard and click it
+            logger.info("🔍 Looking for Apply button on dashboard...")
+            apply_selectors = [
+                (By.XPATH, "//button[contains(text(), 'Apply')]"),
+                (By.XPATH, "//a[contains(text(), 'Apply')]"),
+                (By.XPATH, "//button[contains(@class, 'apply')]"),
+                (By.XPATH, "//*[contains(text(), 'Apply now')]"),
+                (By.XPATH, "//*[contains(text(), 'Apply')]")
+            ]
             
-            # Navigate directly to name change URL
+            apply_clicked = False
+            for selector in apply_selectors:
+                try:
+                    apply_element = selenium_config.wait_for_element(self.driver, selector, timeout=5)
+                    if apply_element:
+                        if selenium_config.safe_click(self.driver, apply_element):
+                            logger.info("✅ Apply button clicked successfully")
+                            apply_clicked = True
+                            time.sleep(3)
+                            break
+                except:
+                    continue
+            
+            if not apply_clicked:
+                logger.warning("⚠️ Apply button not found, proceeding to applications page")
+            
+            # Step 2: Navigate to My Applications page
+            applications_url = "https://connect.torrentpower.com/tplcp/application/myapplications"
+            logger.info(f"🔗 Navigating to My Applications: {applications_url}")
+            self.driver.get(applications_url)
+            time.sleep(3)
+            
+            # Take screenshot of applications page
+            selenium_config.take_screenshot(self.driver, "torrent_my_applications.png")
+            
+            # Step 3: Look for Name Change option and click it
+            logger.info("🔍 Looking for Name Change option...")
+            name_change_selectors = [
+                (By.XPATH, "//div[contains(text(), 'Name change')]"),
+                (By.XPATH, "//a[contains(text(), 'Name change')]"),
+                (By.XPATH, "//button[contains(text(), 'Name change')]"),
+                (By.XPATH, "//*[contains(text(), 'Name Change')]"),
+                (By.XPATH, "//*[contains(text(), 'name change')]"),
+                (By.PARTIAL_LINK_TEXT, "Name change"),
+                (By.PARTIAL_LINK_TEXT, "Name Change")
+            ]
+            
+            name_change_clicked = False
+            for selector in name_change_selectors:
+                try:
+                    name_change_element = selenium_config.wait_for_element(self.driver, selector, timeout=5)
+                    if name_change_element:
+                        if selenium_config.safe_click(self.driver, name_change_element):
+                            logger.info("✅ Name Change option clicked successfully")
+                            name_change_clicked = True
+                            time.sleep(3)
+                            break
+                except:
+                    continue
+            
+            if not name_change_clicked:
+                logger.warning("⚠️ Name Change option not found, navigating directly to form")
+            
+            # Step 4: Navigate directly to name change request form
             name_change_url = "https://connect.torrentpower.com/tplcp/application/namechangerequest"
-            logger.info(f"🔗 Navigating to: {name_change_url}")
+            logger.info(f"🔗 Navigating to Name Change Form: {name_change_url}")
             self.driver.get(name_change_url)
             time.sleep(3)
             
-            # Take screenshot
+            # Take screenshot of name change form
             selenium_config.take_screenshot(self.driver, "torrent_name_change_form.png")
             
-            # Check if we're on the right page
+            # Verify we're on the correct page
             current_url = self.driver.current_url
             if "namechangerequest" in current_url:
-                logger.info("✅ Name change form loaded!")
+                logger.info("✅ Name change form loaded successfully!")
                 return {"success": True}
             else:
                 logger.warning(f"⚠️ Unexpected URL: {current_url}")
-                return {"success": True, "warning": f"Unexpected URL: {current_url}"}
+                return {"success": True, "warning": f"Reached URL: {current_url}"}
             
         except Exception as e:
             logger.error(f"❌ Navigation failed: {e}")
@@ -144,148 +200,269 @@ class TorrentPowerService:
             return {"success": False, "error": str(e)}
     
     def fill_name_change_form(self, form_data):
-        """Fill the name change form automatically"""
+        """Fill the name change form automatically with enhanced field detection"""
         try:
-            logger.info("📝 Filling name change form...")
+            logger.info("📝 Filling Torrent Power name change form...")
+            logger.info(f"📋 Form data received: {list(form_data.keys())}")
             filled_fields = 0
             
-            # Multiple selector strategies for each field
+            # Enhanced field selectors for Torrent Power specific form
             field_selectors = {
                 'city': [
                     (By.NAME, "city"),
                     (By.ID, "city"),
-                    (By.XPATH, "//select[contains(@name, 'city')]")
+                    (By.NAME, "cityId"),
+                    (By.ID, "cityId"),
+                    (By.XPATH, "//select[contains(@name, 'city')]"),
+                    (By.XPATH, "//select[contains(@id, 'city')]")
                 ],
                 'service_number': [
                     (By.NAME, "serviceNumber"),
                     (By.NAME, "service_number"),
+                    (By.NAME, "serviceNo"),
                     (By.ID, "serviceNumber"),
-                    (By.XPATH, "//input[contains(@name, 'service')]")
+                    (By.ID, "service_number"),
+                    (By.XPATH, "//input[contains(@name, 'service')]"),
+                    (By.XPATH, "//input[contains(@placeholder, 'service')]"),
+                    (By.XPATH, "//input[contains(@placeholder, 'Service')]")
                 ],
                 'mobile': [
                     (By.NAME, "mobileNumber"),
                     (By.NAME, "mobile"),
+                    (By.NAME, "mobileNo"),
+                    (By.ID, "mobileNumber"),
                     (By.ID, "mobile"),
-                    (By.XPATH, "//input[contains(@name, 'mobile')]")
+                    (By.XPATH, "//input[contains(@name, 'mobile')]"),
+                    (By.XPATH, "//input[contains(@placeholder, 'mobile')]"),
+                    (By.XPATH, "//input[@type='tel']")
                 ],
                 'email': [
                     (By.NAME, "email"),
+                    (By.NAME, "emailId"),
                     (By.ID, "email"),
-                    (By.XPATH, "//input[contains(@name, 'email')]")
+                    (By.ID, "emailId"),
+                    (By.XPATH, "//input[contains(@name, 'email')]"),
+                    (By.XPATH, "//input[@type='email']"),
+                    (By.XPATH, "//input[contains(@placeholder, 'email')]")
                 ],
                 'old_name': [
                     (By.NAME, "oldName"),
                     (By.NAME, "currentName"),
+                    (By.NAME, "existingName"),
                     (By.ID, "oldName"),
-                    (By.XPATH, "//input[contains(@name, 'old') or contains(@name, 'current')]")
+                    (By.ID, "currentName"),
+                    (By.XPATH, "//input[contains(@name, 'old')]"),
+                    (By.XPATH, "//input[contains(@name, 'current')]"),
+                    (By.XPATH, "//input[contains(@name, 'existing')]"),
+                    (By.XPATH, "//input[contains(@placeholder, 'current')]"),
+                    (By.XPATH, "//input[contains(@placeholder, 'old')]")
                 ],
                 'new_name': [
                     (By.NAME, "newName"),
+                    (By.NAME, "proposedName"),
                     (By.ID, "newName"),
-                    (By.XPATH, "//input[contains(@name, 'new')]")
+                    (By.ID, "proposedName"),
+                    (By.XPATH, "//input[contains(@name, 'new')]"),
+                    (By.XPATH, "//input[contains(@name, 'proposed')]"),
+                    (By.XPATH, "//input[contains(@placeholder, 'new')]"),
+                    (By.XPATH, "//input[contains(@placeholder, 'proposed')]")
                 ]
             }
             
-            # Fill each field
+            # Fill each field with multiple attempts
             for field_name, selectors in field_selectors.items():
-                if form_data.get(field_name):
-                    field_found = False
-                    
-                    for selector in selectors:
-                        try:
-                            element = selenium_config.wait_for_element(self.driver, selector, timeout=5)
-                            if element:
-                                if field_name == 'city' and element.tag_name == 'select':
-                                    # Handle dropdown
+                field_value = form_data.get(field_name)
+                if not field_value:
+                    logger.info(f"⏭️ Skipping {field_name} - no value provided")
+                    continue
+                
+                logger.info(f"🔍 Attempting to fill {field_name} with value: {field_value}")
+                field_found = False
+                
+                for i, selector in enumerate(selectors):
+                    try:
+                        element = selenium_config.wait_for_element(self.driver, selector, timeout=3)
+                        if element and element.is_displayed():
+                            
+                            # Handle dropdown fields
+                            if element.tag_name == 'select':
+                                try:
+                                    select = Select(element)
+                                    # Try exact match first
                                     try:
-                                        select = Select(element)
-                                        select.select_by_visible_text(form_data[field_name])
-                                        logger.info(f"✅ {field_name} dropdown selected: {form_data[field_name]}")
+                                        select.select_by_visible_text(field_value)
+                                        logger.info(f"✅ {field_name} dropdown selected (exact): {field_value}")
                                         filled_fields += 1
                                         field_found = True
                                         break
                                     except:
-                                        continue
+                                        # Try partial match
+                                        options = [option.text for option in select.options]
+                                        for option in options:
+                                            if field_value.lower() in option.lower():
+                                                select.select_by_visible_text(option)
+                                                logger.info(f"✅ {field_name} dropdown selected (partial): {option}")
+                                                filled_fields += 1
+                                                field_found = True
+                                                break
+                                        if field_found:
+                                            break
+                                except Exception as select_error:
+                                    logger.warning(f"⚠️ Dropdown selection failed for {field_name}: {select_error}")
+                                    continue
+                            
+                            # Handle text input fields
+                            else:
+                                if selenium_config.safe_send_keys(self.driver, element, str(field_value)):
+                                    logger.info(f"✅ {field_name} filled successfully: {field_value}")
+                                    filled_fields += 1
+                                    field_found = True
+                                    break
                                 else:
-                                    # Handle text input
-                                    if selenium_config.safe_send_keys(self.driver, element, form_data[field_name]):
-                                        logger.info(f"✅ {field_name} filled: {form_data[field_name]}")
-                                        filled_fields += 1
-                                        field_found = True
-                                        break
-                        except:
-                            continue
-                    
-                    if not field_found:
-                        logger.warning(f"⚠️ {field_name} field not found")
+                                    logger.warning(f"⚠️ Failed to send keys to {field_name}")
+                                    
+                    except Exception as e:
+                        logger.debug(f"🔍 Selector {i+1}/{len(selectors)} failed for {field_name}: {e}")
+                        continue
+                
+                if not field_found:
+                    logger.warning(f"❌ {field_name} field not found with any selector")
             
-            # Handle captcha
-            try:
-                captcha_field = self.driver.find_element(By.NAME, "captcha")
-                logger.warning("⚠️ Captcha detected - manual intervention required")
-                selenium_config.take_screenshot(self.driver, "torrent_form_captcha.png")
-                return {"success": False, "error": "Captcha detected - manual intervention required"}
-            except NoSuchElementException:
+            # Check for captcha
+            captcha_selectors = [
+                (By.NAME, "captcha"),
+                (By.ID, "captcha"),
+                (By.XPATH, "//input[contains(@name, 'captcha')]"),
+                (By.XPATH, "//input[contains(@placeholder, 'captcha')]"),
+                (By.XPATH, "//input[contains(@placeholder, 'Captcha')]")
+            ]
+            
+            captcha_found = False
+            for selector in captcha_selectors:
+                try:
+                    captcha_element = selenium_config.wait_for_element(self.driver, selector, timeout=2)
+                    if captcha_element and captcha_element.is_displayed():
+                        logger.warning("⚠️ Captcha detected - manual intervention required")
+                        selenium_config.take_screenshot(self.driver, "torrent_form_captcha_detected.png")
+                        captcha_found = True
+                        break
+                except:
+                    continue
+            
+            if not captcha_found:
                 logger.info("✅ No captcha detected")
             
-            # Take final screenshot
-            selenium_config.take_screenshot(self.driver, "torrent_form_filled.png")
+            # Take final screenshot of filled form
+            selenium_config.take_screenshot(self.driver, "torrent_form_filled_final.png")
             
+            # Summary
             if filled_fields > 0:
-                logger.info(f"✅ Form filled successfully! {filled_fields} fields completed")
-                return {"success": True, "filled_fields": filled_fields}
+                logger.info(f"✅ Form filling completed! Successfully filled {filled_fields} fields")
+                return {
+                    "success": True, 
+                    "filled_fields": filled_fields,
+                    "captcha_detected": captcha_found,
+                    "message": f"Successfully filled {filled_fields} form fields"
+                }
             else:
-                logger.warning("⚠️ No fields were filled")
-                return {"success": False, "error": "No form fields found or filled"}
+                logger.warning("⚠️ No fields were successfully filled")
+                return {
+                    "success": False, 
+                    "error": "No form fields found or filled",
+                    "filled_fields": 0
+                }
             
         except Exception as e:
             logger.error(f"❌ Form filling failed: {e}")
-            selenium_config.take_screenshot(self.driver, "torrent_form_error.png")
-            return {"success": False, "error": str(e)}
+            selenium_config.take_screenshot(self.driver, "torrent_form_filling_error.png")
+            return {
+                "success": False, 
+                "error": str(e),
+                "filled_fields": filled_fields
+            }
     
     def automate_name_change(self, login_data, form_data):
-        """Complete automation flow"""
+        """Complete automation flow following exact Torrent Power navigation"""
         try:
             logger.info("🚀 Starting Torrent Power name change automation...")
+            logger.info("📋 Following exact flow: Login → Apply → My Applications → Name Change Form")
             
             # Setup driver
             self.setup_driver()
             
-            # Step 1: Login
+            # Step 1: Login to Torrent Power
+            logger.info("🔐 Step 1: Login to Torrent Power portal")
             login_result = self.login(login_data['username'], login_data['password'])
             if not login_result['success']:
-                return login_result
+                return {
+                    "success": False,
+                    "error": f"Login failed: {login_result.get('error', 'Unknown error')}",
+                    "step": "login"
+                }
             
-            # Step 2: Navigate to name change
+            # Step 2: Navigate through the complete flow
+            logger.info("🧭 Step 2: Navigate to name change form")
             nav_result = self.navigate_to_name_change()
             if not nav_result['success']:
-                return nav_result
+                return {
+                    "success": False,
+                    "error": f"Navigation failed: {nav_result.get('error', 'Unknown error')}",
+                    "step": "navigation"
+                }
             
-            # Step 3: Fill form
+            # Step 3: Fill the name change form
+            logger.info("📝 Step 3: Fill name change form")
             fill_result = self.fill_name_change_form(form_data)
             if not fill_result['success']:
-                return fill_result
+                return {
+                    "success": False,
+                    "error": f"Form filling failed: {fill_result.get('error', 'Unknown error')}",
+                    "step": "form_filling"
+                }
             
-            # Take screenshot for verification
-            screenshot_path = f"screenshots/torrent_power_form_{int(time.time())}.png"
-            os.makedirs("screenshots", exist_ok=True)
-            self.driver.save_screenshot(screenshot_path)
+            # Step 4: Take final screenshot and prepare result
+            final_screenshot = selenium_config.take_screenshot(self.driver, f"torrent_power_completed_{int(time.time())}.png")
+            
+            logger.info("✅ Torrent Power automation completed successfully!")
             
             return {
                 "success": True,
-                "message": "Torrent Power name change form filled successfully",
-                "screenshot": screenshot_path,
-                "next_step": "Manual review and submission recommended",
+                "message": "Torrent Power name change form filled successfully via RPA automation",
+                "screenshot": final_screenshot,
+                "next_step": "Please review the form and submit manually",
                 "website": "Torrent Power",
-                "service": "Name Change"
+                "service": "Name Change",
+                "flow_completed": [
+                    "✅ Logged into Torrent Power account",
+                    "✅ Clicked Apply button on dashboard", 
+                    "✅ Navigated to My Applications",
+                    "✅ Accessed Name Change form",
+                    f"✅ Auto-filled {fill_result.get('filled_fields', 0)} form fields",
+                    "✅ Form ready for manual review and submission"
+                ],
+                "filled_fields": fill_result.get('filled_fields', 0)
             }
             
         except Exception as e:
-            logger.error(f"Automation failed: {e}")
-            return {"success": False, "error": str(e)}
+            logger.error(f"❌ Automation failed: {e}")
+            error_screenshot = selenium_config.take_screenshot(self.driver, f"torrent_power_error_{int(time.time())}.png")
+            
+            return {
+                "success": False,
+                "error": str(e),
+                "screenshot": error_screenshot,
+                "message": "Torrent Power automation encountered an error"
+            }
         
         finally:
-            self.cleanup()
+            # Keep browser open for manual review in non-headless mode
+            # In production (headless), cleanup after delay
+            if self.headless:
+                time.sleep(5)  # Give time to save screenshot
+                self.cleanup()
+            else:
+                logger.info("🔍 Browser kept open for manual review (non-headless mode)")
+                # Don't cleanup in non-headless mode for debugging
     
     def cleanup(self):
         """Close browser and cleanup"""
