@@ -6,6 +6,16 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
+// Utility function to mask user email
+const maskEmail = (email) => {
+  if (!email) return '';
+  const atIndex = email.indexOf('@');
+  if (atIndex > 0) {
+    return '***' + email.substring(atIndex);
+  }
+  return '***@gmail.com';
+};
+
 const MobileLayout = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
@@ -143,7 +153,7 @@ const MobileLayout = () => {
                   </div>
                   <div>
                     <h2 className="text-lg font-bold">{user?.full_name || 'User'}</h2>
-                    <p className="text-sm text-white/80">{user?.email}</p>
+                    <p className="text-sm text-white/80">{maskEmail(user?.email)}</p>
                   </div>
                 </div>
               </div>

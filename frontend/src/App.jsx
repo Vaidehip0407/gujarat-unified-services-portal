@@ -7,12 +7,15 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Documents from './pages/Documents';
 import Services from './pages/Services';
+import ServiceFacilities from './pages/ServiceFacilities';
+import ServiceProviders from './pages/ServiceProviders';
+import NameChangeApplication from './pages/NameChangeApplication';
 import Applications from './pages/Applications';
-import GuidedFlow from './pages/GuidedFlow';
 import NameChangeForm from './pages/NameChangeForm';
 import NewConnectionForm from './pages/NewConnectionForm';
 import TestRPA from './pages/TestRPA';
 import SupplierVerification from './pages/SupplierVerification';
+import Support from './pages/Support';
 import OfflineIndicator from './components/OfflineIndicator';
 import InstallPWA from './components/InstallPWA';
 import './registerSW';
@@ -73,8 +76,10 @@ function App() {
             <Route path="profile" element={<Profile />} />
             <Route path="documents" element={<Documents />} />
             <Route path="services" element={<Services />} />
+            <Route path="service-facilities/:serviceType" element={<ServiceFacilities />} />
+            <Route path="service-providers/:serviceType/:facilityType" element={<ServiceProviders />} />
+            <Route path="name-change-application/:serviceType" element={<NameChangeApplication />} />
             <Route path="applications" element={<Applications />} />
-            <Route path="guided-flow" element={<GuidedFlow />} />
             <Route path="electricity" element={<NameChangeForm />} />
             <Route path="gas" element={<NameChangeForm />} />
             <Route path="water" element={<NameChangeForm />} />
@@ -82,6 +87,7 @@ function App() {
             <Route path="new-connection" element={<NewConnectionForm />} />
             <Route path="test-rpa" element={<TestRPA />} />
             <Route path="supplier-verification" element={<SupplierVerification />} />
+            <Route path="support" element={<Support />} />
           </Route>
         </Routes>
       </BrowserRouter>

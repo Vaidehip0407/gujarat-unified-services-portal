@@ -8,6 +8,25 @@ import {
   MapPin, Phone, Mail
 } from 'lucide-react';
 
+// Utility functions to mask user information
+const maskMobile = (mobile) => {
+  if (!mobile) return '';
+  const mobileStr = mobile.toString();
+  if (mobileStr.length >= 4) {
+    return '***' + mobileStr.slice(-4);
+  }
+  return '***' + mobileStr;
+};
+
+const maskEmail = (email) => {
+  if (!email) return '';
+  const atIndex = email.indexOf('@');
+  if (atIndex > 0) {
+    return '***' + email.substring(atIndex);
+  }
+  return '***@gmail.com';
+};
+
 const Dashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState({
@@ -45,7 +64,6 @@ const Dashboard = () => {
       id: 'electricity',
       name: 'Electricity',
       nameHindi: 'बिजली',
-      description: 'Name change for electricity connection',
       icon: Zap,
       gradient: 'from-amber-400 to-orange-500',
       link: '/electricity',
@@ -55,7 +73,6 @@ const Dashboard = () => {
       id: 'gas',
       name: 'Gas',
       nameHindi: 'गैस',
-      description: 'Name change for gas connection',
       icon: Flame,
       gradient: 'from-red-400 to-rose-600',
       link: '/gas',
@@ -65,7 +82,6 @@ const Dashboard = () => {
       id: 'water',
       name: 'Water',
       nameHindi: 'पानी',
-      description: 'Name change for water connection',
       icon: Droplets,
       gradient: 'from-cyan-400 to-blue-500',
       link: '/water',
@@ -75,7 +91,6 @@ const Dashboard = () => {
       id: 'property',
       name: 'Property',
       nameHindi: 'संपत्ति',
-      description: 'Name change for property records',
       icon: Building,
       gradient: 'from-emerald-400 to-green-600',
       link: '/property',
@@ -112,13 +127,13 @@ const Dashboard = () => {
             {user?.mobile && (
               <div className="flex items-center gap-2 text-slate-200">
                 <Phone className="w-4 h-4" />
-                <span>{user.mobile}</span>
+                <span>{maskMobile(user.mobile)}</span>
               </div>
             )}
             {user?.email && (
               <div className="flex items-center gap-2 text-slate-200">
                 <Mail className="w-4 h-4" />
-                <span>{user.email}</span>
+                <span>{maskEmail(user.email)}</span>
               </div>
             )}
           </div>
@@ -126,7 +141,7 @@ const Dashboard = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
@@ -160,31 +175,28 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        <Link
+          to="/applications"
+          className="group bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-lg font-bold text-gray-800">My Applications</p>
+              <p className="text-xs text-gray-500">
+                {stats.pending > 0 ? `${stats.pending} pending review` : 'Track your submissions'}
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-purple-500 to-indigo-600 p-3 rounded-lg text-white">
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+        </Link>
       </div>
-
-      {/* Quick Action - My Applications */}
-      <Link
-        to="/applications"
-        className="group flex items-center justify-between bg-white p-5 rounded-xl shadow-lg border border-gray-100 hover:shadow-xl transition-all"
-      >
-        <div className="flex items-center gap-4">
-          <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-lg text-white">
-            <FileText className="w-6 h-6" />
-          </div>
-          <div>
-            <h3 className="font-bold text-gray-800">My Applications</h3>
-            <p className="text-sm text-gray-500">
-              {stats.pending > 0 ? `${stats.pending} pending review` : 'Track your submissions'}
-            </p>
-          </div>
-        </div>
-        <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-      </Link>
 
       {/* Services Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Name Change Services</h2>
+          <h2 className="text-xl font-bold text-gray-800">Services</h2>
           <Link to="/services" className="text-sm text-blue-600 hover:underline">View All</Link>
         </div>
         
@@ -212,7 +224,6 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className="p-4">
-                  <p className="text-sm text-gray-600 mb-2">{service.description}</p>
                   <p className="text-xs text-gray-400">
                     Providers: {service.providers.join(', ')}
                   </p>
@@ -220,34 +231,6 @@ const Dashboard = () => {
               </Link>
             );
           })}
-        </div>
-      </div>
-
-      {/* Official Portals */}
-      <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-        <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-          <ExternalLink className="w-4 h-4" />
-          Official Government Portals
-        </h3>
-        <div className="flex flex-wrap gap-2">
-          {[
-            { name: 'Digital India', url: 'https://digitalindia.gov.in' },
-            { name: 'India Portal', url: 'https://www.india.gov.in' },
-            { name: 'MyGov', url: 'https://www.mygov.in' },
-            { name: 'Torrent Power', url: 'https://connect.torrentpower.com' },
-            { name: 'Gujarat Gas', url: 'https://iconnect.gujaratgas.com' },
-            { name: 'AMC', url: 'https://ahmedabadcity.gov.in' }
-          ].map((portal) => (
-            <a
-              key={portal.name}
-              href={portal.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs px-3 py-2 bg-white border border-gray-200 rounded-lg text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 transition-all flex items-center gap-1"
-            >
-              {portal.name} <ExternalLink className="w-3 h-3" />
-            </a>
-          ))}
         </div>
       </div>
     </div>

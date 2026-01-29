@@ -2,9 +2,19 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   Home, User, FileText, Settings, LogOut, Zap, Flame, Droplets, Building,
-  Menu, X, Bell, ChevronDown, Shield, HelpCircle, MessageCircle
+  Menu, X, Bell, ChevronDown, HelpCircle
 } from 'lucide-react';
 import { useState } from 'react';
+
+// Utility functions to mask user information
+const maskEmail = (email) => {
+  if (!email) return '';
+  const atIndex = email.indexOf('@');
+  if (atIndex > 0) {
+    return '***' + email.substring(atIndex);
+  }
+  return '***@gmail.com';
+};
 
 const Layout = () => {
   const { user, logout } = useAuth();
@@ -16,7 +26,6 @@ const Layout = () => {
     { path: '/', icon: Home, label: 'Dashboard' },
     { path: '/services', icon: Settings, label: 'Services' },
     { path: '/applications', icon: FileText, label: 'My Applications' },
-    { path: '/guided-flow', icon: MessageCircle, label: 'Guided Flow' },
     { path: '/documents', icon: FileText, label: 'Documents' },
     { path: '/profile', icon: User, label: 'Profile' },
   ];
@@ -36,10 +45,8 @@ const Layout = () => {
               <span className="hidden md:inline text-gray-300">|</span>
               <span className="hidden md:inline text-gray-600">भारत सरकार</span>
             </div>
-            <div className="flex items-center gap-4 text-gray-500">
-              <button className="hover:text-primary-600 transition-colors">Skip to Content</button>
-              <span className="text-gray-300">|</span>
-              <button className="hover:text-primary-600 transition-colors">Screen Reader</button>
+            <div className="flex items-center gap-4 text-gray-600">
+              <span className="text-xs font-medium">Digital India Initiative - Empowering Citizens</span>
             </div>
           </div>
           
@@ -101,7 +108,7 @@ const Layout = () => {
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
                     <div className="px-4 py-3 border-b border-gray-100">
                       <p className="text-sm font-semibold text-gray-800">{user?.full_name || 'User'}</p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-xs text-gray-500">{maskEmail(user?.email)}</p>
                     </div>
                     <Link 
                       to="/profile" 
@@ -137,13 +144,13 @@ const Layout = () => {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-64'} bg-white shadow-sm min-h-[calc(100vh-140px)] transition-all duration-300 overflow-hidden border-r border-gray-200`}>
+        <aside className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-64'} bg-white shadow-sm min-h-[calc(100vh-140px)] transition-all duration-300 overflow-hidden border-r border-gray-200 pb-20`}>
           <nav className="p-4">
             {/* Quick Stats */}
             <div className="mb-6 p-4 bg-gradient-to-br from-primary-50 to-blue-50 rounded-lg border border-primary-100">
               <p className="text-xs text-gray-500 mb-1">Welcome back,</p>
               <p className="font-semibold text-gray-800">{user?.full_name || 'User'}</p>
-              <p className="text-xs text-gray-500 mt-2">{user?.email}</p>
+              <p className="text-xs text-gray-500 mt-2">{maskEmail(user?.email)}</p>
             </div>
 
             {/* Navigation */}
@@ -179,27 +186,30 @@ const Layout = () => {
               <p className="text-xs text-gray-600 mb-3">
                 Contact our support team for assistance
               </p>
-              <button className="w-full py-2 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors">
+              <Link
+                to="/support"
+                className="flex items-center justify-center w-full py-2.5 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600 transition-colors"
+              >
                 Get Support
-              </button>
+              </Link>
             </div>
           </nav>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 min-h-[calc(100vh-140px)] bg-gray-50">
+        <main className="flex-1 min-h-[calc(100vh-140px)] bg-gray-50 pb-20">
           <div className="w-full px-6 py-6">
             <Outlet />
           </div>
         </main>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-4">
+      {/* Fixed Footer */}
+      <footer className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-3 z-40">
         <div className="w-full px-6 text-center">
-          <p className="text-sm text-gray-600">© 2024 Unified Services Portal | Government of India</p>
-          <p className="text-xs text-gray-500 mt-1">
-            Designed & Developed for Digital India Initiative
+          <p className="text-sm text-gray-600 font-medium">© 2026 Unified Services Portal | Government of India</p>
+          <p className="text-xs text-gray-500 mt-1 font-medium">
+           Designed & Developed by GFuture Tech Pvt Ltd
           </p>
         </div>
       </footer>

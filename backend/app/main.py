@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
-from app.routers import auth, users, services, applications, demo_government_simple as demo_government, services_api, guided_flow, whatsapp, documents, services_data, portal_redirect, torrent_power
+from app.routers import auth, users, services, applications, demo_government_simple as demo_government, services_api, whatsapp, documents, services_data, portal_redirect, torrent_power
 from app.config import get_settings
 
 settings = get_settings()
@@ -46,7 +46,6 @@ app.include_router(portal_redirect.router)
 app.include_router(applications.router)
 app.include_router(documents.router)
 app.include_router(demo_government.router)
-app.include_router(guided_flow.router)
 app.include_router(whatsapp.router)
 app.include_router(torrent_power.router)
 

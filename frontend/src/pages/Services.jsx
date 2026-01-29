@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Zap, Flame, Droplets, Building, ArrowRight, ExternalLink, Shield } from 'lucide-react';
+import { Zap, Flame, Droplets, Building, ExternalLink, Shield } from 'lucide-react';
 
 const Services = () => {
   const services = [
@@ -7,7 +7,6 @@ const Services = () => {
       id: 'electricity',
       name: 'Electricity',
       nameHindi: 'बिजली',
-      description: 'Name change application for electricity connection',
       icon: Zap,
       color: 'blue',
       bgColor: 'bg-blue-50',
@@ -26,7 +25,6 @@ const Services = () => {
       id: 'gas',
       name: 'Gas',
       nameHindi: 'गैस',
-      description: 'Name change application for gas connection',
       icon: Flame,
       color: 'indigo',
       bgColor: 'bg-indigo-50',
@@ -43,7 +41,6 @@ const Services = () => {
       id: 'water',
       name: 'Water',
       nameHindi: 'पानी',
-      description: 'Name change application for water connection',
       icon: Droplets,
       color: 'cyan',
       bgColor: 'bg-cyan-50',
@@ -61,7 +58,6 @@ const Services = () => {
       id: 'property',
       name: 'Property',
       nameHindi: 'संपत्ति',
-      description: 'Name change application for property records',
       icon: Building,
       color: 'emerald',
       bgColor: 'bg-emerald-50',
@@ -86,77 +82,38 @@ const Services = () => {
             <Shield className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Name Change Services</h1>
-            <p className="text-gray-500 text-sm">भारत सरकारी सेवाएं • Apply for name change in your utility connections</p>
+            <h1 className="text-2xl font-bold text-gray-800">Government Services</h1>
+            <p className="text-gray-500 text-sm">Select a service to apply for name change in your utility connections</p>
           </div>
         </div>
       </div>
 
-      {/* Info Banner */}
-      <div className="bg-blue-50 border-l-4 border-primary-500 p-4 rounded-lg">
-        <p className="text-sm text-gray-700">
-          <strong className="text-gray-800">How it works:</strong> Select a service category below, fill in your details, and submit your application. You can track the status in "My Applications".
-        </p>
-      </div>
-
       {/* Services Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {services.map((service) => {
           const Icon = service.icon;
+          // Different colors for each service
+          const serviceColors = {
+            electricity: 'bg-yellow-500 group-hover:bg-yellow-600',
+            gas: 'bg-red-500 group-hover:bg-red-600', 
+            water: 'bg-blue-500 group-hover:bg-blue-600',
+            property: 'bg-green-500 group-hover:bg-green-600'
+          };
+          
           return (
-            <div 
+            <Link
               key={service.id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+              to={`/service-facilities/${service.id}`}
+              className="group bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all hover:scale-105"
             >
-              {/* Header */}
-              <div className={`${service.bgColor} p-6 border-b ${service.borderColor}`}>
-                <div className="flex items-center gap-4">
-                  <div className={`${service.iconBg} p-3 rounded-lg`}>
-                    <Icon className={`w-7 h-7 ${service.textColor}`} />
-                  </div>
-                  <div>
-                    <h2 className={`text-xl font-bold ${service.textColor}`}>{service.name}</h2>
-                    <p className="text-gray-600 text-sm">{service.nameHindi}</p>
-                  </div>
+              <div className="p-6 text-center">
+                <div className={`w-16 h-16 ${serviceColors[service.id]} rounded-xl flex items-center justify-center mx-auto mb-4 transition-colors`}>
+                  <Icon className="w-8 h-8 text-white" />
                 </div>
+                <h3 className="text-lg font-bold text-gray-800 mb-1">{service.name}</h3>
+                <p className="text-gray-500 text-sm">{service.nameHindi}</p>
               </div>
-
-              {/* Content */}
-              <div className="p-6 space-y-4">
-                <p className="text-gray-600 text-sm">{service.description}</p>
-
-                {/* Service Options */}
-                <div className="space-y-2">
-                  {/* Name Change */}
-                  <Link
-                    to={`/${service.id}`}
-                    className="w-full flex items-center justify-center gap-2 bg-primary-500 text-white py-2.5 rounded-lg font-medium hover:bg-primary-600 transition-colors"
-                  >
-                    Name Change <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-
-                {/* Official Portals */}
-                <div className="border-t border-gray-200 pt-4">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                    Official Portals
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {service.providers.map((provider) => (
-                      <a
-                        key={provider.name}
-                        href={provider.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs px-3 py-1.5 bg-gray-50 text-gray-700 rounded-md hover:bg-gray-100 border border-gray-200 flex items-center gap-1 transition-colors"
-                      >
-                        {provider.name} <ExternalLink className="w-3 h-3" />
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            </Link>
           );
         })}
       </div>
@@ -170,9 +127,12 @@ const Services = () => {
               Contact our support team for assistance
             </p>
           </div>
-          <button className="px-6 py-2.5 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors">
+          <Link
+            to="/support"
+            className="px-6 py-2.5 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors"
+          >
             Get Support
-          </button>
+          </Link>
         </div>
       </div>
     </div>

@@ -51,12 +51,6 @@ const Register = () => {
             <img src="/ashoka-emblem.webp" alt="Ashoka Emblem" className="w-14 h-14 object-contain" />
           </div>
         </div>
-        <div className="flex justify-center gap-3 mb-3">
-          <Zap className="w-6 h-6 text-yellow-600" />
-          <Flame className="w-6 h-6 text-orange-600" />
-          <Droplets className="w-6 h-6 text-blue-600" />
-          <Building className="w-6 h-6 text-green-600" />
-        </div>
         <h1 className="text-2xl font-bold text-gray-800">Unified Services Portal</h1>
         <p className="text-gray-600 text-sm mt-1">एकीकृत सेवा पोर्टल</p>
       </div>
@@ -73,6 +67,8 @@ const Register = () => {
               <h2 className="text-2xl font-bold">Citizen Registration</h2>
               <p className="text-green-100 text-sm mt-1">नागरिक पंजीकरण</p>
             </div>
+
+
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-8 space-y-4">
@@ -184,11 +180,6 @@ const Register = () => {
                 </p>
               </div>
             </form>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center mt-6 text-gray-600 text-sm">
-            <p>🇮🇳 Government of India | सत्यमेव जयते</p>
           </div>
         </div>
       </div>

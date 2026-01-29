@@ -7,6 +7,25 @@ import {
   CheckCircle, Clock, TrendingUp, ChevronRight, Sparkles
 } from 'lucide-react';
 
+// Utility functions to mask user information
+const maskMobile = (mobile) => {
+  if (!mobile) return '';
+  const mobileStr = mobile.toString();
+  if (mobileStr.length >= 4) {
+    return '***' + mobileStr.slice(-4);
+  }
+  return '***' + mobileStr;
+};
+
+const maskEmail = (email) => {
+  if (!email) return '';
+  const atIndex = email.indexOf('@');
+  if (atIndex > 0) {
+    return '***' + email.substring(atIndex);
+  }
+  return '***@gmail.com';
+};
+
 const MobileDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -79,6 +98,7 @@ const MobileDashboard = () => {
     { label: 'Total', labelHi: 'कुल', value: stats.applications, icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
     { label: 'Pending', labelHi: 'लंबित', value: stats.pending, icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50' },
     { label: 'Done', labelHi: 'पूर्ण', value: stats.completed, icon: CheckCircle, color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'My Apps', labelHi: 'मेरे आवेदन', value: 'View', icon: ArrowRight, color: 'text-purple-600', bg: 'bg-purple-50', isLink: true },
   ];
 
   return (
@@ -87,38 +107,31 @@ const MobileDashboard = () => {
       <div className="px-4 py-4">
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
           {quickStats.map((stat, index) => (
-            <div key={index} className="flex-shrink-0 w-32 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-              <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center mb-2`}>
-                <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            stat.isLink ? (
+              <button
+                key={index}
+                onClick={() => navigate('/applications')}
+                className="flex-shrink-0 w-32 bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all"
+              >
+                <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center mb-2`}>
+                  <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                </div>
+                <p className="text-sm font-bold text-gray-800">{stat.value}</p>
+                <p className="text-xs text-gray-500">{stat.label}</p>
+                <p className="text-[10px] text-gray-400">{stat.labelHi}</p>
+              </button>
+            ) : (
+              <div key={index} className="flex-shrink-0 w-32 bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <div className={`w-10 h-10 ${stat.bg} rounded-xl flex items-center justify-center mb-2`}>
+                  <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                </div>
+                <p className="text-2xl font-bold text-gray-800">{loading ? '...' : stat.value}</p>
+                <p className="text-xs text-gray-500">{stat.label}</p>
+                <p className="text-[10px] text-gray-400">{stat.labelHi}</p>
               </div>
-              <p className="text-2xl font-bold text-gray-800">{loading ? '...' : stat.value}</p>
-              <p className="text-xs text-gray-500">{stat.label}</p>
-              <p className="text-[10px] text-gray-400">{stat.labelHi}</p>
-            </div>
+            )
           ))}
         </div>
-      </div>
-
-      {/* My Applications Card */}
-      <div className="px-4 mb-4">
-        <button
-          onClick={() => navigate('/applications')}
-          className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl p-5 shadow-lg flex items-center justify-between hover:shadow-xl transition-all"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-              <FileText className="w-6 h-6" />
-            </div>
-            <div className="text-left">
-              <p className="font-bold text-lg">My Applications</p>
-              <p className="text-sm text-white/80">मेरे आवेदन</p>
-              {stats.pending > 0 && (
-                <p className="text-xs text-white/70 mt-1">{stats.pending} pending review</p>
-              )}
-            </div>
-          </div>
-          <ChevronRight className="w-6 h-6" />
-        </button>
       </div>
 
       {/* Services Section */}

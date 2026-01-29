@@ -1,30 +1,86 @@
+# Exclude guided-flow-whatsapp folder
+guided-flow-whatsapp/
+
+# Node modules
+node_modules/
+*/node_modules/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+dist/
+build/
+*/dist/
+*/build/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# next.js build output
+.next
+
+# Nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Virtual Environment
-venv/
 env/
+venv/
 ENV/
 env.bak/
 venv.bak/
@@ -33,27 +89,6 @@ venv.bak/
 *.db
 *.sqlite
 *.sqlite3
-
-# Environment Variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
-
-# Build outputs
-dist/
-build/
-.next/
-out/
 
 # IDE
 .vscode/
@@ -71,41 +106,11 @@ out/
 ehthumbs.db
 Thumbs.db
 
-# Logs
-logs/
-*.log
-
-# Screenshots (keep some examples, ignore test screenshots)
-backend/screenshots/error_*.png
-backend/screenshots/test_*.png
-
-# Chrome Extension (packaged)
-chrome-extension/*.crx
-chrome-extension/*.pem
-
-# Temporary files
-*.tmp
-*.temp
-
 # Terraform
-terraform/.terraform/
-terraform/.terraform.lock.hcl
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
-terraform/*.tfvars
-terraform/gov-portal.pem
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
 
-# Sensitive files
-*.pem
-*.key
-*.crt
-*.p12
-*.pfx
-
-# Cache directories
-.qodo/
-.cache/
-
-# Test files
-test-*.py
-*-test.py
+# Screenshots
+screenshots/
