@@ -38,7 +38,7 @@ services:
       - india-portal-network
     restart: unless-stopped
 
-  # Nginx Reverse Proxy
+  # Nginx Reverse Proxy with SSL
   nginx:
     image: nginx:alpine
     container_name: india-portal-nginx
