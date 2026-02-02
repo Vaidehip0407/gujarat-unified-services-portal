@@ -5,6 +5,7 @@ Real browser automation for form filling
 
 import time
 import os
+import stat
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
@@ -88,7 +89,31 @@ class TorrentPowerRPA:
                 from webdriver_manager.chrome import ChromeDriverManager
                 
                 # Use webdriver-manager to handle driver installation
-                service = Service(ChromeDriverManager().install())
+                driver_path = ChromeDriverManager().install()
+                logger.info(f"🔍 ChromeDriver path from webdriver-manager: {driver_path}")
+                
+                # Fix common webdriver-manager path issue
+                if 'THIRD_PARTY_NOTICES' in driver_path:
+                    # Extract the correct directory and find the actual chromedriver binary
+                    import os
+                    driver_dir = os.path.dirname(driver_path)
+                    actual_driver = os.path.join(driver_dir, 'chromedriver')
+                    if os.path.exists(actual_driver):
+                        driver_path = actual_driver
+                        logger.info(f"🔧 Fixed ChromeDriver path: {driver_path}")
+                    else:
+                        # Look for chromedriver in the directory
+                        for file in os.listdir(driver_dir):
+                            if 'chromedriver' in file and not file.endswith('.txt') and not 'NOTICES' in file:
+                                driver_path = os.path.join(driver_dir, file)
+                                logger.info(f"🔧 Found ChromeDriver binary: {driver_path}")
+                                break
+                
+                # Make sure the driver is executable
+                import stat
+                os.chmod(driver_path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+                
+                service = Service(driver_path)
                 self.driver = webdriver.Chrome(service=service, options=chrome_options)
                 logger.info("✅ Chrome driver initialized with webdriver-manager")
                 
@@ -108,6 +133,16 @@ class TorrentPowerRPA:
                     except Exception as e2:
                         logger.error(f"❌ Explicit service Chrome driver failed: {e2}")
                         raise Exception(f"Chrome driver initialization failed: {e}, {e2}")
+            except Exception as e:
+                logger.error(f"❌ webdriver-manager Chrome driver failed: {e}")
+                
+                # Fallback to system PATH
+                try:
+                    self.driver = webdriver.Chrome(options=chrome_options)
+                    logger.info("✅ Chrome driver initialized from system PATH (fallback)")
+                except Exception as e2:
+                    logger.error(f"❌ System PATH fallback failed: {e2}")
+                    raise Exception(f"Chrome driver initialization failed: {e}, {e2}")
             
             # Set timeouts
             self.driver.implicitly_wait(10)
