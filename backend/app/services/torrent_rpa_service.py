@@ -84,65 +84,86 @@ class TorrentPowerRPA:
             if is_docker:
                 chrome_options.binary_location = "/usr/bin/google-chrome"
             
-            # Try to initialize Chrome driver
+            # Try multiple ChromeDriver approaches in order of preference
+            driver_initialized = False
+            
+            # Method 1: Use system-installed ChromeDriver (from Dockerfile)
             try:
-                from webdriver_manager.chrome import ChromeDriverManager
-                
-                # Use webdriver-manager to handle driver installation
-                driver_path = ChromeDriverManager().install()
-                logger.info(f"🔍 ChromeDriver path from webdriver-manager: {driver_path}")
-                
-                # Fix common webdriver-manager path issue
-                if 'THIRD_PARTY_NOTICES' in driver_path:
-                    # Extract the correct directory and find the actual chromedriver binary
-                    import os
-                    driver_dir = os.path.dirname(driver_path)
-                    actual_driver = os.path.join(driver_dir, 'chromedriver')
-                    if os.path.exists(actual_driver):
-                        driver_path = actual_driver
-                        logger.info(f"🔧 Fixed ChromeDriver path: {driver_path}")
-                    else:
-                        # Look for chromedriver in the directory
-                        for file in os.listdir(driver_dir):
-                            if 'chromedriver' in file and not file.endswith('.txt') and not 'NOTICES' in file:
-                                driver_path = os.path.join(driver_dir, file)
-                                logger.info(f"🔧 Found ChromeDriver binary: {driver_path}")
-                                break
-                
-                # Make sure the driver is executable
-                import stat
-                os.chmod(driver_path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
-                
-                service = Service(driver_path)
+                logger.info("🔧 Trying system ChromeDriver from /usr/bin/chromedriver...")
+                service = Service('/usr/bin/chromedriver')
                 self.driver = webdriver.Chrome(service=service, options=chrome_options)
-                logger.info("✅ Chrome driver initialized with webdriver-manager")
-                
-            except ImportError:
-                # Fallback to system PATH
+                logger.info("✅ Chrome driver initialized with system ChromeDriver")
+                driver_initialized = True
+            except Exception as e:
+                logger.error(f"❌ System ChromeDriver failed: {e}")
+            
+            # Method 2: Try webdriver-manager (with path fix)
+            if not driver_initialized:
                 try:
+                    logger.info("🔧 Trying webdriver-manager...")
+                    from webdriver_manager.chrome import ChromeDriverManager
+                    
+                    # Use webdriver-manager to handle driver installation
+                    driver_path = ChromeDriverManager().install()
+                    logger.info(f"🔍 ChromeDriver path from webdriver-manager: {driver_path}")
+                    
+                    # Fix common webdriver-manager path issue
+                    if 'THIRD_PARTY_NOTICES' in driver_path or not driver_path.endswith('chromedriver'):
+                        # Extract the correct directory and find the actual chromedriver binary
+                        driver_dir = os.path.dirname(driver_path)
+                        
+                        # Look for the actual chromedriver binary
+                        possible_paths = [
+                            os.path.join(driver_dir, 'chromedriver'),
+                            os.path.join(driver_dir, 'chromedriver-linux64', 'chromedriver'),
+                            os.path.join(os.path.dirname(driver_dir), 'chromedriver'),
+                        ]
+                        
+                        for possible_path in possible_paths:
+                            if os.path.exists(possible_path):
+                                driver_path = possible_path
+                                logger.info(f"🔧 Fixed ChromeDriver path: {driver_path}")
+                                break
+                        else:
+                            # Search for any chromedriver file in the directory tree
+                            for root, dirs, files in os.walk(os.path.dirname(driver_dir)):
+                                for file in files:
+                                    if file == 'chromedriver':
+                                        driver_path = os.path.join(root, file)
+                                        logger.info(f"🔧 Found ChromeDriver binary: {driver_path}")
+                                        break
+                                if driver_path != ChromeDriverManager().install():
+                                    break
+                    
+                    # Make sure the driver is executable
+                    if os.path.exists(driver_path):
+                        os.chmod(driver_path, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+                        
+                        service = Service(driver_path)
+                        self.driver = webdriver.Chrome(service=service, options=chrome_options)
+                        logger.info("✅ Chrome driver initialized with webdriver-manager")
+                        driver_initialized = True
+                    else:
+                        logger.error(f"❌ ChromeDriver path does not exist: {driver_path}")
+                        
+                except ImportError:
+                    logger.error("❌ webdriver-manager not available")
+                except Exception as e:
+                    logger.error(f"❌ webdriver-manager Chrome driver failed: {e}")
+            
+            # Method 3: Try system PATH (no explicit service)
+            if not driver_initialized:
+                try:
+                    logger.info("🔧 Trying Chrome from system PATH...")
                     self.driver = webdriver.Chrome(options=chrome_options)
                     logger.info("✅ Chrome driver initialized from system PATH")
+                    driver_initialized = True
                 except Exception as e:
                     logger.error(f"❌ System PATH Chrome driver failed: {e}")
-                    
-                    # Last resort - try with explicit service
-                    try:
-                        service = Service('/usr/bin/chromedriver')
-                        self.driver = webdriver.Chrome(service=service, options=chrome_options)
-                        logger.info("✅ Chrome driver initialized with explicit service")
-                    except Exception as e2:
-                        logger.error(f"❌ Explicit service Chrome driver failed: {e2}")
-                        raise Exception(f"Chrome driver initialization failed: {e}, {e2}")
-            except Exception as e:
-                logger.error(f"❌ webdriver-manager Chrome driver failed: {e}")
-                
-                # Fallback to system PATH
-                try:
-                    self.driver = webdriver.Chrome(options=chrome_options)
-                    logger.info("✅ Chrome driver initialized from system PATH (fallback)")
-                except Exception as e2:
-                    logger.error(f"❌ System PATH fallback failed: {e2}")
-                    raise Exception(f"Chrome driver initialization failed: {e}, {e2}")
+            
+            # If all methods failed
+            if not driver_initialized:
+                raise Exception("All ChromeDriver initialization methods failed")
             
             # Set timeouts
             self.driver.implicitly_wait(10)
