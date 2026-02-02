@@ -6,6 +6,7 @@ Real browser automation for form filling
 import time
 import os
 import stat
+import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
@@ -13,7 +14,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-import logging
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
