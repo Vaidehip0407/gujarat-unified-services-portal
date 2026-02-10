@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, Loader, AlertCircle, Play } from 'lucide-react';
-import TorrentPowerAutomation from '../components/TorrentPowerAutomation';
+import { ArrowLeft, CheckCircle, Loader, AlertCircle } from 'lucide-react';
 
 const FinalFormPage = () => {
   const location = useLocation();
@@ -27,7 +26,6 @@ const FinalFormPage = () => {
   });
   
   const [errors, setErrors] = useState({});
-  const [showAutomation, setShowAutomation] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,27 +67,14 @@ const FinalFormPage = () => {
       return;
     }
     
-    // Show automation modal
-    setShowAutomation(true);
-  };
-
-  const handleAutomationComplete = (result) => {
-    setShowAutomation(false);
-    
-    if (result.success) {
-      // Navigate to success page or dashboard
-      navigate('/applications', {
-        state: {
-          success: true,
-          message: 'Application submitted successfully!',
-          referenceNumber: result.referenceNumber
-        }
-      });
-    }
-  };
-
-  const handleCloseAutomation = () => {
-    setShowAutomation(false);
+    // Submit form directly
+    navigate('/applications', {
+      state: {
+        success: true,
+        message: 'Application submitted successfully!',
+        formData: formData
+      }
+    });
   };
 
   // Provider-specific configurations
@@ -355,22 +340,6 @@ const FinalFormPage = () => {
           </ul>
         </div>
       </div>
-
-      {/* Automation Modal */}
-      {showAutomation && providerId === 'torrent-power' && (
-        <TorrentPowerAutomation
-          userData={{
-            city: formData.city,
-            serviceNumber: formData.serviceNumber,
-            tNumber: formData.tNumber,
-            mobile: formData.mobile,
-            email: formData.email,
-            confirmEmail: formData.confirmEmail
-          }}
-          onComplete={handleAutomationComplete}
-          onClose={handleCloseAutomation}
-        />
-      )}
     </div>
   );
 };

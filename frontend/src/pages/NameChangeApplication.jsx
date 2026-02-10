@@ -3,10 +3,9 @@ import { useParams, useSearchParams, Link } from 'react-router-dom';
 import {
   Zap, Flame, Droplets, Building, ArrowLeft, Upload,
   User, Phone, Mail, MapPin, FileText, Calendar,
-  AlertCircle, CheckCircle, Info, Sparkles, Play, Bot
+  AlertCircle, CheckCircle, Info, Sparkles
 } from 'lucide-react';
 import axios from '../api/axios';
-import TorrentPowerAutomation from '../components/TorrentPowerAutomation';
 
 const NameChangeApplication = () => {
   const { serviceType } = useParams();
@@ -722,15 +721,6 @@ const NameChangeApplication = () => {
           </div>
         </div>
       </form>
-
-      {/* Torrent Power Automation Modal */}
-      {showAutomation && (
-        <TorrentPowerAutomation
-          userData={formData}
-          onComplete={handleAutomationComplete}
-          onClose={handleCloseAutomation}
-        />
-      )}
     </div>
   );
 };
