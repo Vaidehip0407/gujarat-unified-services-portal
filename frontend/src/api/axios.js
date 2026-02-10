@@ -2,14 +2,15 @@ import axios from 'axios';
 
 // Dynamic API base URL - works for localhost and EC2
 const getApiBaseUrl = () => {
-  // Check if we're in development (localhost)
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  const hostname = window.location.hostname;
+  
+  // Development
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'http://localhost:8000/api';
   }
   
-  // Production - use relative path to work with any IP
-  // This allows Nginx to proxy requests properly
-  return '/api';
+  // Production - use same hostname with port 8000
+  return `http://${hostname}:8000/api`;
 };
 
 const api = axios.create({
