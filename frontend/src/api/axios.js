@@ -1,19 +1,15 @@
 import axios from 'axios';
 
-// Dynamic API base URL - works for localhost, Linux EC2, and Windows EC2
+// Dynamic API base URL - works for localhost and EC2
 const getApiBaseUrl = () => {
   // Check if we're in development (localhost)
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     return 'http://localhost:8000/api';
   }
   
-  // Windows EC2 URL - New IP
-  if (window.location.hostname === '34.228.199.241') {
-    return 'http://34.228.199.241:8000/api';
-  }
-  
-  // Fallback Linux EC2 URL
-  return 'http://3.88.187.173:8000/api';
+  // Production - use relative path to work with any IP
+  // This allows Nginx to proxy requests properly
+  return '/api';
 };
 
 const api = axios.create({
