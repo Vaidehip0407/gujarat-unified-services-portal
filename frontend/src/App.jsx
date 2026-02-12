@@ -10,6 +10,8 @@ import DocumentUploadFlow from './pages/DocumentUploadFlow';
 import FinalFormPage from './pages/FinalFormPage';
 import CompanyFormation from './pages/CompanyFormation';
 import GovernmentGrants from './pages/GovernmentGrants';
+import AllGrants from './pages/AllGrants';
+import GrantDetail from './pages/GrantDetail';
 import Profile from './pages/Profile';
 import Documents from './pages/Documents';
 import Services from './pages/Services';
@@ -24,6 +26,17 @@ import Support from './pages/Support';
 import OfflineIndicator from './components/OfflineIndicator';
 import InstallPWA from './components/InstallPWA';
 import './registerSW';
+
+// Admin Pages
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import UserManagement from './pages/admin/UserManagement';
+import PackageManagement from './pages/admin/PackageManagement';
+import ApplicationManagement from './pages/admin/ApplicationManagement';
+import UtilityServicesManagement from './pages/admin/UtilityServicesManagement';
+import CompanyFormationManagement from './pages/admin/CompanyFormationManagement';
+import GrantsManagement from './pages/admin/GrantsManagement';
+import Settings from './pages/admin/Settings';
 
 // Global error handler for undefined property errors
 window.addEventListener('error', (event) => {
@@ -63,6 +76,16 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+const AdminRoute = ({ children }) => {
+  const adminToken = localStorage.getItem('admin_token');
+  
+  if (!adminToken) {
+    return <Navigate to="/admin/login" replace />;
+  }
+  
+  return children;
+};
+
 function App() {
   return (
     <AuthProvider>
@@ -77,6 +100,17 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/users" element={<AdminRoute><UserManagement /></AdminRoute>} />
+          <Route path="/admin/packages" element={<AdminRoute><PackageManagement /></AdminRoute>} />
+          <Route path="/admin/applications" element={<AdminRoute><ApplicationManagement /></AdminRoute>} />
+          <Route path="/admin/utility-services" element={<AdminRoute><UtilityServicesManagement /></AdminRoute>} />
+          <Route path="/admin/company-formation" element={<AdminRoute><CompanyFormationManagement /></AdminRoute>} />
+          <Route path="/admin/grants" element={<AdminRoute><GrantsManagement /></AdminRoute>} />
+          <Route path="/admin/settings" element={<AdminRoute><Settings /></AdminRoute>} />
           
           {/* New Document-First Flow Routes */}
           <Route path="/new-home" element={<NewHome />} />
@@ -93,7 +127,9 @@ function App() {
           
           {/* Government Grants Routes */}
           <Route path="/government-grants" element={<GovernmentGrants />} />
-          <Route path="/government-grants/:categoryId" element={<GovernmentGrants />} />
+          <Route path="/government-grants/all" element={<AllGrants />} />
+          <Route path="/government-grants/:category" element={<AllGrants />} />
+          <Route path="/government-grants/grant/:grantId" element={<GrantDetail />} />
           <Route path="/government-grants/find-grant" element={<DocumentUploadFlow />} />
           
           <Route path="/" element={

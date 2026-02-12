@@ -287,4 +287,13 @@ class DemoAnyrorApplication(Base):
     department = Column(String(100), default="Revenue Department")
 
 
+# Import grant and security models to register them with SQLAlchemy
+from app.models_grants import (
+    Grant, GrantApplication, GrantFavorite,
+    GrantStatus, GrantCategory, Ministry, GrantLevel, GrantApplicationStatus
+)
+from app.models_security import (
+    UserRoleModel, AuditLog, DocumentSecurity, SecurityAlert, LoginAttempt,
+    UserRole, AuditAction, SecurityAlertType
+)
 

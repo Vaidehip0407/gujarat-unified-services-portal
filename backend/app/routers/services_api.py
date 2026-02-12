@@ -3,7 +3,7 @@ Services API Router
 Provides endpoints for all services data
 """
 from fastapi import APIRouter, HTTPException
-from app.data import get_service_loader
+from app.seed_data.service_loader import get_service_loader
 from typing import List, Dict, Any
 
 router = APIRouter(prefix="/api/services", tags=["Services"])

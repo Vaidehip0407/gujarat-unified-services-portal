@@ -202,9 +202,10 @@ const GovernmentGrants = () => {
                 {/* View All Button */}
                 <Link
                   to={`/government-grants/${category.id}`}
-                  className="block w-full py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg font-semibold text-center hover:from-green-700 hover:to-teal-700 transition-colors"
+                  className="block w-full py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg font-semibold text-center hover:from-green-700 hover:to-teal-700 transition-colors flex items-center justify-center gap-2"
                 >
-                  View All Grants
+                  <span>View All Grants</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             ))}

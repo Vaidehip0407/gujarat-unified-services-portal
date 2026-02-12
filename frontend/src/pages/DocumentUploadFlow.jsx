@@ -6,8 +6,24 @@ import {
 } from 'lucide-react';
 
 const DocumentUploadFlow = () => {
-  const { serviceType, providerId } = useParams();
+  const { serviceType, providerId, serviceId } = useParams();
   const navigate = useNavigate();
+  
+  // Determine back URL based on current context
+  const getBackUrl = () => {
+    if (serviceId) {
+      // Coming from company formation
+      return '/company-formation';
+    } else if (serviceType && providerId) {
+      // Coming from utility services
+      return '/utility-services';
+    } else {
+      // Default fallback
+      return '/';
+    }
+  };
+  
+  const backUrl = getBackUrl();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [uploading, setUploading] = useState(false);
@@ -132,7 +148,7 @@ const DocumentUploadFlow = () => {
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
-            to={`/utility-services`}
+            to={backUrl}
             className="inline-flex items-center gap-2 text-white hover:text-blue-100 mb-4 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
